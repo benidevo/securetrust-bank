@@ -1,0 +1,73 @@
+# IntelliJ
+.idea/
+
+# VSCode
+.vscode/
+.settings/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Java
+target/
+*.class
+*.jar
+*.war
+
+# Maven
+/.mvn/
+target/
+mvnw
+mvnw.cmd
+pom.xml.tag
+release.properties
+spring-boot-*.jar
+
+# Node.js
+node_modules/
+
+# Express
+npm-debug.log
+yarn-error.log
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyc/
+*.pyo/
+*.pyd/
+*.egg-info/
+dist/
+build/
+*.egg-info/
+*.egg/
+*.exe
+*.msi
+*.pyc/
+*.pyo/
+*.pyd/
+*.so
+*.dll
+*.pyd/
+*.lib
+*.exp
+venv
+env
+
+# Django
+*.log
+*.pot
+*.pyc
+*.pyo
+__pycache__/
+local_settings.py
+db.sqlite3
+media/
+static/
+
+# Spring Boot
+spring.log
