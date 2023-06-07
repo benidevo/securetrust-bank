@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+
+  redis:
+    image: redis:7.0.0-alpine
+    container_name: secure-bank-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - secure-bank
+
+  rabbitmq:
+    image: rabbitmq:3.11.18-management
+    container_name: secure-bank-queue
+    hostname: secure-bank-queue
+    ports:
+      - 5672:5672
+      - 15672:15672
+    env_file:
+      "./.env"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - secure-bank
+
+volumes:
+  rabbitmq-data:
+
+networks:
+    secure-bank:
+      driver: bridge

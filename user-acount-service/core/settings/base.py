@@ -1,23 +1,19 @@
+import os
 from pathlib import Path
 
-import environ
+from dotenv import load_dotenv
 
-env = environ.Env()
+load_dotenv()
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 
 
 APP_DIR = ROOT_DIR / "apps"
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-=cba-x1u)0jmpuezr-mz^)z%)pjebt=gq^=pr!wj@#l^&vfwt#"
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env.bool("DJANGO_DEBUG", False)
+DEBUG = os.environ.get("DJANGO_DEBUG", False)
 
 
-# Application definition
 DJANGO_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -45,10 +41,7 @@ THIRD_PARTY_APPS = [
     # "django_elasticsearch_dsl_drf",
 ]
 
-LOCAL_APPS = [
-    "apps.user_auth",
-    "apps.users"
-]
+LOCAL_APPS = ["apps.user_auth", "apps.users"]
 
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -84,10 +77,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "core.wsgi.application"
 
-
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -97,8 +86,6 @@ DATABASES = {
 
 AUTH_USER_MODEL = "users.User"
 
-# Password validation
-# https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
 PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.Argon2PasswordHasher",
@@ -114,6 +101,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "OPTIONS": {
+            "min_length": 8,
+        },
     },
     {
         "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
@@ -123,9 +113,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    "EXCEPTION_HANDLER": "utils.exception_handler.custom_exception_handler",
+}
 
-# Internationalization
-# https://docs.djangoproject.com/en/4.2/topics/i18n/
 
 LANGUAGE_CODE = "en-us"
 
@@ -138,19 +129,31 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
-
 STATIC_URL = "/staticfiles/"
 STATIC_ROOT = str(ROOT_DIR / "staticfiles")
 
 MEDIA_URL = "/mediafiles/"
 MEDIA_ROOT = str(ROOT_DIR / "mediafiles")
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+REDIS_HOST = os.environ.get("REDIS_HOST", "localhost")
+REDIS_PORT = os.environ.get("REDIS_PORT", 6379)
+
+RABBITMQ_USER = os.environ.get("RABBITMQ_DEFAULT_USER")
+RABBITMQ_PASS = os.environ.get("RABBITMQ_DEFAULT_PASS")
+RABBITMQ_HOST = os.environ.get("RABBITMQ_RABBITMQ_HOST", "localhost")
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://{}:{}/0".format(REDIS_HOST, REDIS_PORT),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+    },
+}
 
 LOGGING = {
     "version": 1,

@@ -57,6 +57,7 @@ build/
 *.exp
 venv
 env
+*.env
 
 # pytest
 __pycache__/
