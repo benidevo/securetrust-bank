@@ -58,6 +58,16 @@ build/
 venv
 env
 
+# pytest
+__pycache__/
+.pytest_cache/
+pytest.ini
+
+# Coverage
+htmlcov/
+.coverage
+.coverage.*
+
 # Django
 *.log
 *.pot
