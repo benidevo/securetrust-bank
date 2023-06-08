@@ -2,6 +2,18 @@ version: "3.8"
 
 services:
 
+  user-account-db:
+    image: postgres:15-bullseye
+    container_name: user-account-db
+    volumes:
+        - user_account_db_data:/var/lib/postgresql/data
+    env_file:
+        - ./.env
+    ports:
+      - "5432:5432"
+    networks:
+      - secure-bank
+
   redis:
     image: redis:7.0.0-alpine
     container_name: secure-bank-redis
@@ -26,6 +38,7 @@ services:
 
 volumes:
   rabbitmq-data:
+  user_account_db_data: {}
 
 networks:
     secure-bank:

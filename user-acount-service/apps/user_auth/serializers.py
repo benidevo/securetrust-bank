@@ -22,3 +22,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         return user
+
+
+class EmailSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+
+class VerifyEmailSerializer(EmailSerializer):
+    otp = serializers.CharField(max_length=6, min_length=6)

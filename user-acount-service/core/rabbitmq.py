@@ -1,3 +1,5 @@
+import json
+
 import pika
 from django.conf import settings
 
@@ -39,7 +41,10 @@ class RabbitMQClient:
 
         properties = pika.BasicProperties(delivery_mode=2)
         channel.basic_publish(
-            exchange="", routing_key=queue, body=message, properties=properties
+            exchange="",
+            routing_key=queue,
+            body=json.dumps(message),
+            properties=properties,
         )
 
     def __enter__(self):
