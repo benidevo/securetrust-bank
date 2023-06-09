@@ -1,0 +1,70 @@
+#!/bin/bash
+
+set -o errexit
+
+set -o pipefail
+
+set -o nounset
+
+if [ -z "${LOG_LEVEL:-}" ]; then
+export LOG_LEVEL="debug"
+fi
+
+export HTTP_PORT="8000"
+
+if [ -z "${HTTP_WORKERS:-}" ]; then
+export HTTP_WORKERS=2
+fi
+
+# wait for postgres
+echo "Waiting for User Account Service DB..."
+while ! nc -z user-account-db 5432; do
+  sleep 0.1
+done
+echo "User Account Service DB is now available"
+
+# wait for RabbitMQ
+echo "Waiting for RabbitMQ..."
+while ! nc -z rabbitmq 5672; do
+  sleep 0.1
+done
+echo "RabbitMQ is now available"
+
+# wait for Redis
+echo "Waiting for Redis..."
+while ! nc -z redis 6379; do
+  sleep 0.1
+done
+echo "Redis is now available"
+
+if [ -n "${IS_LOCAL:-}" ] && [ "${IS_LOCAL}" = "true" ]; then
+    settings_module="core.settings.local"
+else
+    settings_module="core.settings.production"
+fi
+
+export DJANGO_SETTINGS_MODULE=$settings_module
+export PYTHONPATH=/app
+
+echo "Initializing DB..."
+python manage.py migrate --no-input
+python manage.py collectstatic --no-input
+status=$?
+if [ $status -eq 0 ]; then
+    echo "Starting Web server..."
+
+    gunicorn_command="gunicorn core.wsgi:application \
+        --bind 0.0.0.0:$HTTP_PORT \
+        --workers $HTTP_WORKERS \
+        --timeout 120 \
+        --log-level $LOG_LEVEL"
+
+    if [ "${ENABLE_RELOAD:-}" = "true" ]; then
+        gunicorn_command+=" --reload"
+    fi
+
+    exec $gunicorn_command
+
+else
+  echo "Error initializing DB, exiting..."
+fi

@@ -125,21 +125,21 @@ USE_I18N = True
 USE_TZ = True
 
 
-STATIC_URL = "/staticfiles/"
+STATIC_URL = "/user-account/staticfiles/"
 STATIC_ROOT = str(ROOT_DIR / "staticfiles")
 
-MEDIA_URL = "/mediafiles/"
+MEDIA_URL = "/user-account/mediafiles/"
 MEDIA_ROOT = str(ROOT_DIR / "mediafiles")
 
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-REDIS_HOST = os.environ.get("REDIS_HOST", "localhost")
+REDIS_HOST = os.environ.get("REDIS_HOST", "redis")
 REDIS_PORT = os.environ.get("REDIS_PORT", 6379)
 
 RABBITMQ_USER = os.environ.get("RABBITMQ_DEFAULT_USER")
 RABBITMQ_PASS = os.environ.get("RABBITMQ_DEFAULT_PASS")
-RABBITMQ_HOST = os.environ.get("RABBITMQ_RABBITMQ_HOST", "localhost")
+RABBITMQ_HOST = os.environ.get("RABBITMQ_RABBITMQ_HOST", "rabbitmq")
 
 CACHES = {
     "default": {

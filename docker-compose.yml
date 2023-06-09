@@ -1,24 +1,55 @@
 version: "3.8"
 
 services:
+  api-gateway:
+    restart: always
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    ports:
+      - "80:80"
+    volumes:
+      - static_volume:/app/staticfiles
+      - media_volume:/app/mediafiles
+    depends_on:
+      - user-account-service
+    networks:
+      - secure-bank
+
+  user-account-service:
+    build:
+      context: ./user-account-service
+      dockerfile: docker/Dockerfile
+    container_name: user-account-service
+    volumes:
+      - ./user-account-service:/app:z
+      - static_volume:/app/staticfiles
+      - media_volume:/app/mediafiles
+    restart: always
+    env_file:
+      - ./.env
+
+    depends_on:
+      - user-account-db
+      - redis
+      - rabbitmq
+    networks:
+      - secure-bank
 
   user-account-db:
     image: postgres:15-bullseye
     container_name: user-account-db
     volumes:
-        - user_account_db_data:/var/lib/postgresql/data
+      - user_account_db_data:/var/lib/postgresql/data
     env_file:
-        - ./.env
-    ports:
-      - "5432:5432"
+      - ./.env
     networks:
       - secure-bank
 
   redis:
     image: redis:7.0.0-alpine
     container_name: secure-bank-redis
-    ports:
-      - "6379:6379"
     networks:
       - secure-bank
 
@@ -27,7 +58,6 @@ services:
     container_name: secure-bank-queue
     hostname: secure-bank-queue
     ports:
-      - 5672:5672
       - 15672:15672
     env_file:
       "./.env"
@@ -39,6 +69,8 @@ services:
 volumes:
   rabbitmq-data:
   user_account_db_data: {}
+  media_volume:
+  static_volume:
 
 networks:
     secure-bank:
