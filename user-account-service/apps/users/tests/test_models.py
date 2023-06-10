@@ -38,12 +38,12 @@ def test_profile_is_complete(user_data):
     complete_profile = {
         "avatar_url": fake.url(),
         "gender": fake.random_element(elements=["M", "F", "O"]),
-        "phone_number": fake.phone_number(),
+        "phone_number": "+2348788876378",
         "address": fake.address(),
         "city": fake.city(),
         "country": fake.country_code(),
         "date_of_birth": fake.date_of_birth().strftime("%Y-%m-%d"),
-        "nin": fake.random_int(min=10000000000, max=99999999999),
+        "nin": fake.random_int(min=100000000, max=999999999),
     }
     for field, value in complete_profile.items():
         setattr(profile, field, value)

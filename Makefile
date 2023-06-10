@@ -19,6 +19,10 @@ show-logs-user_account_db:
 user-account-db-generate_migrations:
 	docker compose exec -it user-account-service python manage.py makemigrations
 
+
+test-user-account:
+	docker compose exec -it user-account-service pytest 
+
 user-account-db-migrate:
 	docker compose exec -it user-account-service python manage.py migrate
 

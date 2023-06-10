@@ -18,11 +18,7 @@ class RegisterView(generics.CreateAPIView):
     serializer_class = UserRegistrationSerializer
     model = User
     rabbitmq_client = RabbitMQClient()
-
-    def post(self, request, *args, **kwargs):
-        with self.rabbitmq_client:
-            response = super().post(request, *args, **kwargs)
-        return response
+    cache = Cache()
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -33,13 +29,12 @@ class RegisterView(generics.CreateAPIView):
         otp = generate_otp()
         data = serializer.validated_data
         email = data.get("email")
-        cache = self.get_cache()
-        cache.set(f"{VERIFY_EMAIL_CACHE_KEY}{email}", otp, ttl=1200)
+
+        self.cache.set(key=f"{VERIFY_EMAIL_CACHE_KEY}{email}", value=otp, ttl=1200)
 
         message = {"first_name": data.get("first_name"), "otp": otp, "email": email}
-        self.rabbitmq_client.publish_message(
-            queue=EMAIL_VERIFICATION_QUEUE, message=message
-        )
+        with self.rabbitmq_client as client:
+            client.publish_message(queue=EMAIL_VERIFICATION_QUEUE, message=message)
 
         return Response(
             success=True,
@@ -47,18 +42,12 @@ class RegisterView(generics.CreateAPIView):
             status=status.HTTP_201_CREATED,
         )
 
-    def get_cache(self):
-        return Cache()
-
 
 class ResendEmailVerificationView(generics.GenericAPIView):
     serializer_class = EmailSerializer
     model = User
-    cache = Cache
+    cache = Cache()
     rabbitmq_client = RabbitMQClient()
-
-    def get_cache(self):
-        return self.cache()
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -81,8 +70,8 @@ class ResendEmailVerificationView(generics.GenericAPIView):
             )
 
         otp = generate_otp()
-        cache = self.get_cache()
-        cache.set(f"{VERIFY_EMAIL_CACHE_KEY}{email}", otp, ttl=1200)
+
+        self.cache.set(key=f"{VERIFY_EMAIL_CACHE_KEY}{email}", value=otp, ttl=1200)
 
         message = {"first_name": user.first_name, "otp": otp, "email": email}
         with self.rabbitmq_client as client:
@@ -98,6 +87,7 @@ class ResendEmailVerificationView(generics.GenericAPIView):
 class VerifyEmailView(generics.GenericAPIView):
     serializer_class = VerifyEmailSerializer
     model = User
+    cache = Cache()
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -107,8 +97,7 @@ class VerifyEmailView(generics.GenericAPIView):
         email = data.get("email")
         otp = data.get("otp")
 
-        cache = self.get_cache()
-        cached_otp = cache.get(f"{VERIFY_EMAIL_CACHE_KEY}{email}")
+        cached_otp = self.cache.get(f"{VERIFY_EMAIL_CACHE_KEY}{email}")
         if not cached_otp:
             return Response(
                 success=False,
@@ -126,7 +115,7 @@ class VerifyEmailView(generics.GenericAPIView):
         user = self.model.objects.filter(email=email).first()
         user.is_active = True
         user.save()
-        cache.delete(f"{VERIFY_EMAIL_CACHE_KEY}{email}")
+        self.cache.delete(f"{VERIFY_EMAIL_CACHE_KEY}{email}")
 
         return Response(
             success=True,
