@@ -28,5 +28,29 @@ class EmailSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
 
-class VerifyEmailSerializer(EmailSerializer):
+class OTPSerializer(serializers.Serializer):
     otp = serializers.CharField(max_length=6, min_length=6)
+
+
+class VerifyEmailSerializer(EmailSerializer, OTPSerializer):
+    pass
+
+
+class ResetPasswordSerializer(EmailSerializer, OTPSerializer):
+    password = serializers.CharField(write_only=True)
+
+    def validate_password(self, password):
+        validate_password(password)
+        return password
+
+
+class LoginSerializer(EmailSerializer):
+    password = serializers.CharField(write_only=True)
+
+    def validate_password(self, password):
+        validate_password(password)
+        return password
+
+
+class RefreshTokenSerializer(serializers.Serializer):
+    refresh_token = serializers.CharField(max_length=2000)

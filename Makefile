@@ -16,6 +16,12 @@ show-logs-user_account:
 show-logs-user_account_db:
 	docker compose logs user-account-db
 
+user-account-db-generate_migrations:
+	docker compose exec -it user-account-service python manage.py makemigrations
+
+user-account-db-migrate:
+	docker compose exec -it user-account-service python manage.py migrate
+
 show-logs-redis:
 	docker compose logs redis
 

@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from pathlib import Path
 
 import dj_database_url
@@ -32,12 +33,6 @@ THIRD_PARTY_APPS = [
     "phonenumber_field",
     "drf_yasg",
     "corsheaders",
-    "rest_framework.authtoken",
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
-    "dj_rest_auth",
-    "dj_rest_auth.registration",
     # "django_elasticsearch_dsl",
     # "django_elasticsearch_dsl_drf",
 ]
@@ -111,6 +106,19 @@ AUTH_PASSWORD_VALIDATORS = [
 
 REST_FRAMEWORK = {
     "EXCEPTION_HANDLER": "utils.exception_handler.custom_exception_handler",
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "utils.jwt_authentication.JWTAuthentication",
+    ],
+}
+
+
+JWT_AUTH = {
+    "JWT_PUBLIC_KEY": open(ROOT_DIR / "public.key").read(),
+    "JWT_PRIVATE_KEY": open(ROOT_DIR / "private.key").read(),
+    "JWT_ALGORITHM": "RS256",
+    "JWT_VERIFY": True,
+    "JWT_ACCESS_TOKEN_EXPIRATION": timedelta(minutes=30),
+    "JWT_REFRESH_TOKEN_EXPIRATION": timedelta(days=1),
 }
 
 

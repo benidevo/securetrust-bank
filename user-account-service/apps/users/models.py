@@ -1,3 +1,4 @@
+from enum import Enum
 from uuid import uuid4 as uuid
 
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
@@ -8,6 +9,16 @@ from django_countries.fields import CountryField
 from phonenumber_field.modelfields import PhoneNumberField
 
 from apps.users.managers import CustomUserManager
+from utils.constants import ADMIN_USER, REGULAR_USER
+
+
+class Roles(Enum):
+    USER = REGULAR_USER
+    ADMIN = ADMIN_USER
+
+    @classmethod
+    def choices(cls):
+        return [(role.value, role.name) for role in cls]
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -18,6 +29,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     first_name = models.CharField(_("First Name"), max_length=50)
     last_name = models.CharField(_("Last Name"), max_length=50)
+    role = models.CharField(
+        _("Role"), max_length=20, choices=Roles.choices(), default=Roles.USER.value
+    )
     is_active = models.BooleanField(_("Active"), default=False)
     is_staff = models.BooleanField(_("Staff"), default=False)
     created_at = models.DateTimeField(_("Created At"), auto_now_add=True)

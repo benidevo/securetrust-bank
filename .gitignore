@@ -82,3 +82,6 @@ static/
 
 # Spring Boot
 spring.log
+
+# Others
+*.key
