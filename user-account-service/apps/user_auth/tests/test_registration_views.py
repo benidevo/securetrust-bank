@@ -1,5 +1,4 @@
-from contextlib import contextmanager
-from unittest.mock import ANY, MagicMock, patch
+from unittest.mock import ANY, patch
 
 import pytest
 from django.urls import reverse
@@ -11,45 +10,21 @@ from apps.user_auth.views.registration import (
     ResendEmailVerificationView,
     VerifyEmailView,
 )
-from apps.users.tests.factories import UserFactory
-from core.rabbitmq import RabbitMQClient
-from core.redis import Cache
 from utils import generate_otp
 from utils.constants import EMAIL_VERIFICATION_QUEUE, VERIFY_EMAIL_CACHE_KEY
+from utils.factories import UserFactory
 
 fake = Faker()
 
 
-@pytest.fixture
-def mocked_rabbitmq_client():
-    rabbitmq_mock = MagicMock(spec=RabbitMQClient)
-    return rabbitmq_mock
-
-
-@pytest.fixture
-def mocked_cache():
-    cache = MagicMock(spec=Cache)
-    return cache
-
-
-@pytest.fixture
-def user_payload():
-    return {
-        "email": fake.email(),
-        "password": fake.password(),
-        "first_name": fake.first_name(),
-        "last_name": fake.last_name(),
-    }
-
-
 @pytest.mark.django_db
 class TestRegisterView:
-    def test_post(self, mocked_rabbitmq_client, mocked_cache, user_payload, rf):
+    def test_post(self, mocked_rabbitmq_client, mocked_cache, user_data, rf):
         url = reverse("user-register")
 
         request = rf.post(
             url,
-            data=user_payload,
+            data=user_data,
         )
         view = RegisterView.as_view()
 
@@ -66,7 +41,7 @@ class TestRegisterView:
             == "Registration successful. A verification code has been sent to your email"  # noqa
         )
         mocked_cache.set.assert_called_once_with(
-            key=f"{VERIFY_EMAIL_CACHE_KEY}{user_payload.get('email')}",
+            key=f"{VERIFY_EMAIL_CACHE_KEY}{user_data.get('email')}",
             value=ANY,
             ttl=ANY,
         )
@@ -78,10 +53,10 @@ class TestRegisterView:
 @pytest.mark.django_db
 class TestResendEmailVerificationView:
     def test_post_existing_user_not_verified(
-        self, mocked_rabbitmq_client, mocked_cache, user_payload, rf
+        self, mocked_rabbitmq_client, mocked_cache, user_data, rf
     ):
         user = UserFactory(
-            email=user_payload.get("email"), password=user_payload.get("password")
+            email=user_data.get("email"), password=user_data.get("password")
         )
 
         url = reverse("resend-verification")
@@ -110,11 +85,11 @@ class TestResendEmailVerificationView:
         )
 
     def test_post_existing_user_already_verified(
-        self, mocked_rabbitmq_client, mocked_cache, user_payload, rf
+        self, mocked_rabbitmq_client, mocked_cache, user_data, rf
     ):
         user = UserFactory(
-            email=user_payload.get("email"),
-            password=user_payload.get("password"),
+            email=user_data.get("email"),
+            password=user_data.get("password"),
             is_active=True,
         )
 

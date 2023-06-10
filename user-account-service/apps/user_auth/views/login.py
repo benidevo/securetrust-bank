@@ -23,11 +23,20 @@ class LoginView(generics.GenericAPIView):
         password = serializer.validated_data.get("password")
 
         user = self.model.objects.filter(email=email).first()
+
         if not user or not user.check_password(password):
             raise AuthenticationFailed()
 
+        if not user.is_active:
+            return Response(
+                success=False,
+                message="Inactive account",
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         access_token, refresh_token = self.jwt_client.generate_tokens(
-            user_id=user.pk, user_role="user"
+            user_id=user.pk,
+            user_role=user.role,
         )
         RefreshToken.objects.update_or_create(
             user=user, defaults={"token": refresh_token, "is_active": True}

@@ -9,6 +9,7 @@ SecureTrust Bank is an online banking platform that allows users to create bank 
   - [Overview](#overview)
   - [Features](#features)
   - [Technology Stack](#technology-stack)
+  - [Docs](#docs)
   - [License](#license)
 
 ## Overview
@@ -48,6 +49,7 @@ The technology stack used in this project is as follows:
   - Typescript
   - Node.js
   - Express
+  - RabbitMQ
   - Docker
 
 - Bank Account Service:
@@ -63,6 +65,10 @@ The technology stack used in this project is as follows:
   - Redis
   - PostgreSQL
   - Docker
+
+## Docs
+
+- User Account Service: <http://localhost/api/v1/user-account/api-docs>
 
 ## License
 

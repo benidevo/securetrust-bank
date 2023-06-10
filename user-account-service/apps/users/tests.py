@@ -4,8 +4,7 @@ from django.test import override_settings
 from faker import Faker as BaseFaker
 
 from apps.users.models import Profile
-
-from .factories import UserFactory
+from utils.factories import UserFactory
 
 User = get_user_model()
 fake = BaseFaker()

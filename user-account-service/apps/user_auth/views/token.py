@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib.auth import get_user_model
 from rest_framework import generics, status
 from rest_framework.exceptions import AuthenticationFailed, NotFound
@@ -30,7 +32,7 @@ class RefreshTokenView(generics.GenericAPIView):
             raise AuthenticationFailed("Invalid or expired token")
 
         access_token, _ = self.jwt_client.generate_tokens(
-            user_id=user.pk, user_role="user"
+            user_id=user.pk, user_role=user.role
         )
 
         token.is_active = False
@@ -42,7 +44,7 @@ class RefreshTokenView(generics.GenericAPIView):
         return Response(data=data, status=status.HTTP_200_OK)
 
 
-class DeleteRefreshToken(generics.DestroyAPIView):
+class DeleteRefreshTokenView(generics.DestroyAPIView):
     serializer_class = EmailSerializer
     model = RefreshToken
     permission_classes = [IsAuthenticated, IsAdmin]
@@ -64,8 +66,4 @@ class DeleteRefreshToken(generics.DestroyAPIView):
         except User.DoesNotExist:
             raise NotFound("Account does not exist")
 
-        return (
-            user.refresh_token
-            if not User.refresh_token.RelatedObjectDoesNotExist
-            else None
-        )
+        return self.model.objects.filter(user=user)

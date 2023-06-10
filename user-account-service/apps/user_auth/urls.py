@@ -8,7 +8,7 @@ from apps.user_auth.views.registration import (
     ResendEmailVerificationView,
     VerifyEmailView,
 )
-from apps.user_auth.views.token import DeleteRefreshToken, RefreshTokenView
+from apps.user_auth.views.token import DeleteRefreshTokenView, RefreshTokenView
 
 urlpatterns = [
     path("register", RegisterView.as_view(), name="user-register"),
@@ -22,6 +22,6 @@ urlpatterns = [
     path("reset-password", ResetPasswordView.as_view(), name="reset-password"),
     path("login", LoginView.as_view(), name="login"),
     path("logout", LogoutView.as_view(), name="logout"),
-    path("token", DeleteRefreshToken.as_view(), name="delete-refresh-token"),
+    path("token", DeleteRefreshTokenView.as_view(), name="delete-refresh-token"),
     path("token/refresh", RefreshTokenView.as_view(), name="refresh-token"),
 ]

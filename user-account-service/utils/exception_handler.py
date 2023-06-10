@@ -15,7 +15,7 @@ def custom_exception_handler(exc, context):
     if isinstance(exc, ValidationError):
         return Response(
             success=False,
-            message="Validation Error",
+            message="Validation error.",
             error=exc.detail,
             status=exc.status_code,
         )

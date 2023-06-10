@@ -14,6 +14,7 @@ class ForgotPasswordView(generics.GenericAPIView):
     serializer_class = EmailSerializer
     model = User
     rabbitmq_client = RabbitMQClient()
+    cache = Cache()
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -29,12 +30,12 @@ class ForgotPasswordView(generics.GenericAPIView):
                 status=status.HTTP_200_OK,
             )
 
-        cache = self.get_cache()
-
         otp = generate_otp()
         message = {"first_name": user.first_name, "email": user.email, "otp": otp}
 
-        cache.set(f"{RESET_PASSWORD_CACHE_KEY}{user.email}", otp, ttl=1200)
+        self.cache.set(
+            key=f"{RESET_PASSWORD_CACHE_KEY}{user.email}", value=otp, ttl=1200
+        )
         with self.rabbitmq_client as client:
             client.publish_message(queue=RESET_PASSWORD_QUEUE, message=message)
 
@@ -44,13 +45,11 @@ class ForgotPasswordView(generics.GenericAPIView):
             status=status.HTTP_200_OK,
         )
 
-    def get_cache(self):
-        return Cache()
-
 
 class ResetPasswordView(generics.GenericAPIView):
     serializer_class = ResetPasswordSerializer
     model = User
+    cache = Cache()
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -59,8 +58,7 @@ class ResetPasswordView(generics.GenericAPIView):
         data = serializer.validated_data
         email = data.get("email")
 
-        cache = self.get_cache()
-        cached_otp = cache.get(f"{RESET_PASSWORD_CACHE_KEY}{email}")
+        cached_otp = self.cache.get(key=f"{RESET_PASSWORD_CACHE_KEY}{email}")
         if cached_otp != data.get("otp"):
             return Response(
                 success=False,
@@ -78,12 +76,9 @@ class ResetPasswordView(generics.GenericAPIView):
 
         user.set_password(data.get("password"))
         user.save()
-        cache.delete(f"{RESET_PASSWORD_CACHE_KEY}{email}")
+        self.cache.delete(f"{RESET_PASSWORD_CACHE_KEY}{email}")
 
         return Response(
             message="Password changed successfully",
             status=status.HTTP_200_OK,
         )
-
-    def get_cache(self):
-        return Cache()
