@@ -6,7 +6,7 @@ services:
     build:
       context: ./api-gateway
       dockerfile: Dockerfile
-    container_name: api-gateway
+    container_name: stb-api-gateway
     ports:
       - "80:80"
     volumes:
@@ -21,7 +21,7 @@ services:
     build:
       context: ./user-account-service
       dockerfile: docker/Dockerfile
-    container_name: user-account-service
+    container_name: stb-user-account-service
     volumes:
       - ./user-account-service:/app:z
       - static_volume:/app/staticfiles
@@ -38,7 +38,7 @@ services:
 
   user-account-db:
     image: postgres:15-bullseye
-    container_name: user-account-db
+    container_name: stb-user-account-db
     volumes:
       - user_account_db_data:/var/lib/postgresql/data
     env_file:
@@ -50,7 +50,7 @@ services:
     build:
       context: ./notification-service
       dockerfile: docker/Dockerfile
-    container_name: notification-service
+    container_name: stb-notification-service
     volumes:
       - /app/node_modules
       - ./notification-service:/app:z
@@ -59,21 +59,29 @@ services:
       - ./notification-service/.env
     depends_on:
       - rabbitmq
+      - email-server
+    networks:
+      - secure-bank
+
+  email-server:
+    image: mailhog/mailhog:v1.0.0
+    container_name: stb-email-server
+    restart: always
     ports:
-      - "3000:3000"
+      - "8025:8025"
     networks:
       - secure-bank
 
   redis:
     image: redis:7.0.0-alpine
-    container_name: secure-bank-redis
+    container_name: stb-redis
     networks:
       - secure-bank
 
   rabbitmq:
     image: rabbitmq:3.11.18-management
-    container_name: secure-bank-queue
-    hostname: secure-bank-queue
+    container_name: stb-queue
+    hostname: stb-queue
     ports:
       - 15672:15672
     env_file:

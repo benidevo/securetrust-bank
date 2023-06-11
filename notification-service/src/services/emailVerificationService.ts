@@ -1,6 +1,10 @@
 import { injectable } from 'tsyringe';
 import { systemLogs } from '../utils/logger';
-import { EMAIL_VERIFICATION_QUEUE } from '../utils/constants';
+import {
+  EMAIL_VERIFICATION_QUEUE,
+  VERIFY_EMAIL_SUBJECT,
+  VERIFY_EMAIL_TEMPLATE,
+} from '../utils/constants';
 import { IEmailVerificationMsgDTO } from '../dtos/EmailVerificationMessage';
 import EmailService from './emailService';
 
@@ -16,11 +20,11 @@ class EmailVerificationService extends EmailService {
 
       const { email } = messageData;
 
-      // Process the email notification
-      // email template
-
-      // Send the email to the user
-      await this.sendEmail(messageData);
+      await this.sendEmail(
+        VERIFY_EMAIL_SUBJECT,
+        messageData,
+        VERIFY_EMAIL_TEMPLATE
+      );
 
       try {
         systemLogs.info(`Verification mail sent successfully to ${email}`);
