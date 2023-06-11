@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "build": "npx tsc && cp -r ./src/services/emails dist/services/emails",
+    "build": "mkdir -p dist/services/emails && cp -r ./src/services/emails/* dist/services/emails && npx tsc",
     "start": "node dist/server.js",
-    "dev": "concurrently \"npx tsc --watch\" \"cp -r ./src/services/emails dist/services/emails && nodemon -q dist/server.js\"",
+    "dev": "mkdir -p dist/services/emails && cp -r ./src/services/emails/* dist/services/emails && concurrently \"npx tsc --watch\" \"nodemon -q dist/server.js\"",
     "eslint:fix": "eslint --fix"
   },
   "keywords": [],

@@ -15,29 +15,32 @@ class EmailVerificationService extends EmailService {
       return;
     }
 
+    let messageData: IEmailVerificationMsgDTO;
+
     try {
-      const messageData: IEmailVerificationMsgDTO = JSON.parse(msg);
+      messageData = JSON.parse(msg);
+    } catch (error) {
+      systemLogs.error(
+        `Failed to process message on ${EMAIL_VERIFICATION_QUEUE}: ${error}`
+      );
+    }
 
-      const { email } = messageData;
+    const { email } = messageData;
 
+    try {
       await this.sendEmail(
         VERIFY_EMAIL_SUBJECT,
         messageData,
         VERIFY_EMAIL_TEMPLATE
       );
 
-      try {
-        systemLogs.info(`Verification mail sent successfully to ${email}`);
-      } catch (error) {
-        systemLogs.error(
-          `Failed to send verification email to ${email}:  ${error}`
-        );
-      }
+      systemLogs.info(`Verification mail sent successfully to ${email}`);
     } catch (error) {
       systemLogs.error(
-        `Failed to process message on ${EMAIL_VERIFICATION_QUEUE}: ${error}`
+        `Failed to send verification email to ${email}:  ${error}`
       );
     }
+
   }
 }
 

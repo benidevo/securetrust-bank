@@ -9,7 +9,11 @@ from apps.user_auth.serializers import (
 from core.rabbitmq import RabbitMQClient
 from core.redis import Cache
 from utils import Response, generate_otp
-from utils.constants import EMAIL_VERIFICATION_QUEUE, VERIFY_EMAIL_CACHE_KEY
+from utils.constants import (
+    EMAIL_VERIFICATION_QUEUE,
+    REGISTRATION_COMPLETED_QUEUE,
+    VERIFY_EMAIL_CACHE_KEY,
+)
 
 User = get_user_model()
 
@@ -88,6 +92,7 @@ class VerifyEmailView(generics.GenericAPIView):
     serializer_class = VerifyEmailSerializer
     model = User
     cache = Cache()
+    rabbitmq_client = RabbitMQClient()
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -117,11 +122,12 @@ class VerifyEmailView(generics.GenericAPIView):
         user.save()
         self.cache.delete(f"{VERIFY_EMAIL_CACHE_KEY}{email}")
 
+        message = {"email": email, "first_name": user.first_name}
+        with self.rabbitmq_client as client:
+            client.publish_message(queue=REGISTRATION_COMPLETED_QUEUE, message=message)
+
         return Response(
             success=True,
             message="Email Verified",
             status=status.HTTP_200_OK,
         )
-
-    def get_cache(self):
-        return Cache()

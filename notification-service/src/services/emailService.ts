@@ -3,15 +3,19 @@ import fs from 'fs';
 import handlebars from 'handlebars';
 import path from 'path';
 import transporter from '../config/emailTransport';
-import { IEmailVerificationMsgDTO } from 'src/dtos/EmailVerificationMessage';
+import { IEmailVerificationMsgDTO } from '../dtos/EmailVerificationMessage';
 import { systemLogs } from '../utils/logger';
 import environment from '../config/environment';
-import { getCurrentYear } from '../utils';
+import { IRegistrationCompletedMsgDTO } from '../dtos/RegistrationCompletedMsgDTO';
+import { IPasswordResetMsgDTO } from '../dtos/PasswordResetMsgDTO';
 
 class EmailService {
   protected async sendEmail(
     subject: string,
-    payload: IEmailVerificationMsgDTO,
+    payload:
+      | IEmailVerificationMsgDTO
+      | IRegistrationCompletedMsgDTO
+      | IPasswordResetMsgDTO,
     template: string
   ) {
     try {
@@ -22,8 +26,6 @@ class EmailService {
 
       const compiledTemplate = handlebars.compile(sourceDirectory);
 
-      payload.currentYear = getCurrentYear();
-
       const emailOptions = {
         from: environment.defaultSenderEmail,
         to: payload.email,
@@ -33,7 +35,7 @@ class EmailService {
 
       await transporter.sendMail(emailOptions);
     } catch (error) {
-      systemLogs.error(`email not sent: ${error}`);
+      systemLogs.error(`Email not sent: ${error}`);
     }
   }
 }

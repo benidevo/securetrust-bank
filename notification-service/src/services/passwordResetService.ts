@@ -1,4 +1,4 @@
-import { IPasswordResetMsgDTO } from 'src/dtos/PasswordResetMsgDTO';
+import { IPasswordResetMsgDTO } from '../dtos/PasswordResetMsgDTO';
 import EmailService from './emailService';
 import {
   RESET_PASSWORD_EMAIL_SUBJECT,
@@ -15,29 +15,31 @@ class PasswordResetService extends EmailService {
       return;
     }
 
+    let messageData: IPasswordResetMsgDTO;
+
     try {
-      const messageData: IPasswordResetMsgDTO = JSON.parse(msg);
+      messageData = JSON.parse(msg);
+    } catch (error) {
+      systemLogs.error(
+        `Failed to process message on ${RESET_PASSWORD_QUEUE}: ${error}`
+      );
+    }
 
-      const { email } = messageData;
-
+    const { email } = messageData;
+    try {
       await this.sendEmail(
         RESET_PASSWORD_EMAIL_SUBJECT,
         messageData,
         RESET_PASSWORD_EMAIL_TEMPLATE
       );
 
-      try {
-        systemLogs.info(`Reset password mail sent successfully to ${email}`);
-      } catch (error) {
-        systemLogs.error(
-          `Failed to send resend password email to ${email}:  ${error}`
-        );
-      }
+      systemLogs.info(`Reset password mail sent successfully to ${email}`);
     } catch (error) {
       systemLogs.error(
-        `Failed to process message on ${RESET_PASSWORD_QUEUE}: ${error}`
+        `Failed to send resend password email to ${email}:  ${error}`
       );
     }
+
   }
 }
 

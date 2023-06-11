@@ -3,6 +3,7 @@ RESET_PASSWORD_CACHE_KEY = "reset_password_"
 
 EMAIL_VERIFICATION_QUEUE = "email_verification_queue"
 RESET_PASSWORD_QUEUE = "reset_password_queue"
+REGISTRATION_COMPLETED_QUEUE = "registration_completed_queue"
 
 ADMIN_USER = "ADMIN"
 REGULAR_USER = "USER"

@@ -2,6 +2,7 @@ import amqp from 'amqplib';
 import RabbitMQConsumer from './rabbitMQConsumer';
 import {
   EMAIL_VERIFICATION_QUEUE,
+  REGISTRATION_COMPLETED_QUEUE,
   RESET_PASSWORD_QUEUE,
 } from '../utils/constants';
 import environment from '../config/environment';
@@ -9,6 +10,7 @@ import { systemLogs } from '../utils/logger';
 import { inject, injectable } from 'tsyringe';
 import EmailVerificationService from '../services/emailVerificationService';
 import PasswordResetService from '../services/passwordResetService';
+import RegistrationCompletedService from '../services/registrationCompletedService';
 
 const { amqpUrl } = environment;
 
@@ -18,7 +20,9 @@ export default class NotificationServiceConsumer extends RabbitMQConsumer {
     @inject(EmailVerificationService)
     private emailVerificationService: EmailVerificationService,
     @inject(PasswordResetService)
-    private passwordResetService: PasswordResetService
+    private passwordResetService: PasswordResetService,
+    @inject(RegistrationCompletedService)
+    private registrationCompletedService: RegistrationCompletedService
   ) {
     super(amqpUrl);
   }
@@ -50,6 +54,9 @@ export default class NotificationServiceConsumer extends RabbitMQConsumer {
       case RESET_PASSWORD_QUEUE:
         await this.passwordResetService.processMessage(content);
         break;
+
+      case REGISTRATION_COMPLETED_QUEUE:
+        await this.registrationCompletedService.processMessage(content);
 
       default:
         systemLogs.warn(`No service found for queue: ${queueName}`);

@@ -11,7 +11,11 @@ from apps.user_auth.views.registration import (
     VerifyEmailView,
 )
 from utils import generate_otp
-from utils.constants import EMAIL_VERIFICATION_QUEUE, VERIFY_EMAIL_CACHE_KEY
+from utils.constants import (
+    EMAIL_VERIFICATION_QUEUE,
+    REGISTRATION_COMPLETED_QUEUE,
+    VERIFY_EMAIL_CACHE_KEY,
+)
 from utils.factories import UserFactory
 
 fake = Faker()
@@ -121,7 +125,7 @@ class TestResendEmailVerificationView:
 
 @pytest.mark.django_db
 class TestVerifyEmailView:
-    def test_post_valid_otp(self, mocked_cache, rf):
+    def test_post_valid_otp(self, mocked_rabbitmq_client, mocked_cache, rf):
         user = UserFactory(email="test@example.com", password="Test4321")
 
         otp = generate_otp()
@@ -131,8 +135,11 @@ class TestVerifyEmailView:
         request = rf.post(url, data={"email": user.email, "otp": otp})
         view = VerifyEmailView.as_view()
 
-        with patch.object(VerifyEmailView, "cache", mocked_cache):
-            response = view(request)
+        mocked_rabbitmq_client.__enter__.return_value = mocked_rabbitmq_client
+
+        with patch.object(VerifyEmailView, "rabbitmq_client", mocked_rabbitmq_client):
+            with patch.object(VerifyEmailView, "cache", mocked_cache):
+                response = view(request)
 
         assert response.status_code == status.HTTP_200_OK
         assert response.data["success"] is True
@@ -143,6 +150,9 @@ class TestVerifyEmailView:
         )
         mocked_cache.delete.assert_called_once_with(
             f"{VERIFY_EMAIL_CACHE_KEY}{user.email}"
+        )
+        mocked_rabbitmq_client.publish_message.assert_called_once_with(
+            queue=REGISTRATION_COMPLETED_QUEUE, message=ANY
         )
 
     def test_post_invalid_otp(self, mocked_cache, rf):

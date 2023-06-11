@@ -10,11 +10,15 @@ import NotificationServiceConsumer from './consumers/notificationServiceConsumer
 import {
   EMAIL_VERIFICATION_QUEUE,
   RESET_PASSWORD_QUEUE,
+  REGISTRATION_COMPLETED_QUEUE,
 } from './utils/constants';
 import container from './config/container';
 
 const verifyEmailConsumer = container.resolve(NotificationServiceConsumer);
 const resetPasswordConsumer = container.resolve(NotificationServiceConsumer);
+const registrationCompletedConsumer = container.resolve(
+  NotificationServiceConsumer
+);
 
 export default class App {
   private app: express.Application;
@@ -54,6 +58,9 @@ export default class App {
     try {
       await verifyEmailConsumer.listenOnQueue(EMAIL_VERIFICATION_QUEUE);
       await resetPasswordConsumer.listenOnQueue(RESET_PASSWORD_QUEUE);
+      await registrationCompletedConsumer.listenOnQueue(
+        REGISTRATION_COMPLETED_QUEUE
+      );
     } catch (error) {
       const message = `Error consuming messages: ${error}`;
       systemLogs.error(message);
