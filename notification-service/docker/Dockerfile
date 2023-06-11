@@ -11,6 +11,8 @@ WORKDIR ${APP_HOME}
 RUN addgroup --system stb \
   && adduser --system --ingroup stb stb
 
+RUN apk --no-cache add netcat-openbsd
+
 COPY package*.json ./
 
 RUN npm install
@@ -21,4 +23,4 @@ RUN chown stb:stb ${APP_HOME}
 
 USER stb
 
-CMD [ "npm","run","dev" ]
+CMD ["sh", "./docker/entrypoint.sh"]
