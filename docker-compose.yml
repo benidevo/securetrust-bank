@@ -28,11 +28,26 @@ services:
       - media_volume:/app/mediafiles
     restart: always
     env_file:
-      - ./.env
-
+      - ./user-account-service/.env
     depends_on:
       - user-account-db
       - redis
+      - rabbitmq
+    networks:
+      - secure-bank
+
+  notification-service:
+    build:
+      context: ./notification-service
+      dockerfile: docker/Dockerfile
+    container_name: notification-service
+    volumes:
+      - /app/node_modules
+      - ./notification-service:/app:z
+    restart: always
+    env_file:
+      - ./notification-service/.env
+    depends_on:
       - rabbitmq
     networks:
       - secure-bank

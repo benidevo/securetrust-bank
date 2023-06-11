@@ -21,13 +21,15 @@ user-account-db-generate_migrations:
 
 
 test-user-account:
-	docker compose exec -it user-account-service pytest 
+	docker compose exec -it user-account-service pytest
 
 user-account-db-migrate:
 	docker compose exec -it user-account-service python manage.py migrate
 
 show-logs-redis:
 	docker compose logs redis
+show-logs-notification-service:
+	docker compose logs notification-service
 
 show-logs-rabbitmq:
 	docker compose logs rabbitmq
