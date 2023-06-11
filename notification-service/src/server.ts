@@ -4,7 +4,7 @@ import { systemLogs } from './utils/logger';
   try {
     const App = require('./app').default;
     const app = new App();
-    app.listen();
+    await app.listen();
   } catch (err: any) {
     console.error(
       'Something went wrong when initializing the server:\n',

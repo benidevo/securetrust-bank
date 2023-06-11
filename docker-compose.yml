@@ -36,6 +36,16 @@ services:
     networks:
       - secure-bank
 
+  user-account-db:
+    image: postgres:15-bullseye
+    container_name: user-account-db
+    volumes:
+      - user_account_db_data:/var/lib/postgresql/data
+    env_file:
+      - ./.env
+    networks:
+      - secure-bank
+
   notification-service:
     build:
       context: ./notification-service
@@ -49,16 +59,8 @@ services:
       - ./notification-service/.env
     depends_on:
       - rabbitmq
-    networks:
-      - secure-bank
-
-  user-account-db:
-    image: postgres:15-bullseye
-    container_name: user-account-db
-    volumes:
-      - user_account_db_data:/var/lib/postgresql/data
-    env_file:
-      - ./.env
+    ports:
+      - "3000:3000"
     networks:
       - secure-bank
 

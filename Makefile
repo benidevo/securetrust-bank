@@ -31,6 +31,9 @@ show-logs-redis:
 show-logs-notification-service:
 	docker compose logs notification-service
 
+show-logs-notification-service_errrors:
+	docker compose exec -it notification-service tail -f logs/error.log
+
 show-logs-rabbitmq:
 	docker compose logs rabbitmq
 
