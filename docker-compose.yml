@@ -63,12 +63,42 @@ services:
     networks:
       - secure-bank
 
+  file-upload-service:
+    build:
+      context: ./file-upload-service
+      dockerfile: docker/Dockerfile
+    container_name: stb-file-upload-service
+    volumes:
+      - /app/node_modules
+      - ./file-upload-service:/app:z
+    restart: always
+    ports:
+      - "3500:3500"
+    env_file:
+      - ./file-upload-service/.env
+    depends_on:
+      - aws-emulator
+    networks:
+      - secure-bank
+
   email-server:
     image: mailhog/mailhog:v1.0.0
     container_name: stb-email-server
     restart: always
     ports:
       - "8025:8025"
+    networks:
+      - secure-bank
+
+  aws-emulator:
+    image: localstack/localstack:2.1.0
+    container_name: aws-emulator
+    ports:
+      - 4566:4566
+    environment:
+      - SERVICES=s3
+    volumes:
+      - aws-emulator-data:/tmp/localstack
     networks:
       - secure-bank
 
@@ -96,6 +126,7 @@ volumes:
   user_account_db_data: {}
   media_volume:
   static_volume:
+  aws-emulator-data:
 
 networks:
     secure-bank:
