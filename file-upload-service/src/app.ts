@@ -1,12 +1,12 @@
+import 'reflect-metadata';
 import express from 'express';
-import { Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import 'reflect-metadata';
 import environment from './config/environment';
 import { morganMiddleware, systemLogs } from './utils/logger';
 import rateLimiter from './middlewares/rateLimiter';
 import errorHandler from './middlewares/errorHandler';
+import routes from './routes';
 
 export default class App {
   private app: express.Application;
@@ -24,17 +24,7 @@ export default class App {
   }
 
   setRoutes() {
-    this.app.get(
-      '/api/v1/uploads',
-      async (request: Request, response: Response) => {
-        response.json({
-          success: true,
-          message: 'Welcome To SecureTrust Bank File Upload Service',
-          data: null,
-          error: null,
-        });
-      }
-    );
+    this.app.use('/', routes);
   }
 
   getApp() {

@@ -22,6 +22,7 @@ The backend API consists of four microservices:
 2. Notification Service: Handles sending verification codes and notifications to users via email.
 3. Bank Account Service: Manages the creation of bank accounts, sets initial transaction limits, and processes account upgrades.
 4. Transaction Service: Handles sending and receiving money between bank accounts, enforces transaction limits, and manages transaction history.
+5. File Upload Service: This microservice is responsible for handling file uploads within the application. It provides the functionality to securely upload files, store them in a storage system, and retrieve them when needed.
 
 ## Features
 
@@ -32,6 +33,7 @@ The backend API consists of four microservices:
 - Account upgrade process with additional documentation
 - Transaction processing and management
 - Transaction history tracking
+- File upload, processing and retrieval
 
 ## Technology Stack
 
@@ -43,6 +45,7 @@ The technology stack used in this project is as follows:
   - Django Rest Framework
   - Redis
   - PostgreSQL
+  - RabbitMQ
   - Docker
 
 - Notification Service:
@@ -56,14 +59,21 @@ The technology stack used in this project is as follows:
   - Java
   - Spring Boot
   - Redis
-  - MongoDB
+  - PostgreSQL
   - Docker
 
 - Transaction Service:
   - Java
   - Spring Boot
   - Redis
-  - PostgreSQL
+  - MongoDB
+  - Docker
+
+- File Upload Service:
+  - Typescript
+  - Node.js
+  - Express
+  - AWS S3
   - Docker
 
 ## Docs

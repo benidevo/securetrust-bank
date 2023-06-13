@@ -72,8 +72,6 @@ services:
       - /app/node_modules
       - ./file-upload-service:/app:z
     restart: always
-    ports:
-      - "3500:3500"
     env_file:
       - ./file-upload-service/.env
     depends_on:

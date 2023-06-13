@@ -4,61 +4,58 @@ import { TokenExpiredError, JsonWebTokenError } from 'jsonwebtoken';
 
 import AppError from '../utils/appError';
 import { MulterError } from 'multer';
+import { systemLogs } from '../utils/logger';
+import { ApiErrorResponse } from '../utils/apiResponse';
 
 export default function errorHandler(
   error: Error,
-  request: Request,
-  response: Response,
+  req: Request,
+  res: Response,
   _: NextFunction
 ): Response {
   if (error instanceof AppError) {
-    return response.status(error.statusCode).json({
-      success: false,
-      message: error.message,
-      data: null,
-    });
+    const response = new ApiErrorResponse(error.statusCode, error.message);
+    return response.send(res);
   }
 
   if (error instanceof CelebrateError) {
-    const bodyMessage = error.details.get('body')?.message;
-    const queryMessage = error.details.get('query')?.message;
-    const paramsMessage = error.details.get('params')?.message;
+    const bodyMessage = error.details.get('body')?.details;
+    const queryMessage = error.details.get('query')?.details;
+    const paramsMessage = error.details.get('params')?.details;
 
-    return response.status(400).json({
-      success: false,
-      message: bodyMessage || queryMessage || paramsMessage,
-      data: null,
-    });
+    const response = new ApiErrorResponse(
+      400,
+      'Validation error',
+      bodyMessage || queryMessage || paramsMessage
+    );
+
+    return response.send(res);
   }
 
   if (error instanceof MulterError && error.code === 'LIMIT_UNEXPECTED_FILE') {
-    return response.status(400).json({
-      success: false,
-      message: `${error.message} ${error.field}, max image uploads allowed are 2.`,
-      data: null,
-    });
+    const response = new ApiErrorResponse(
+      400,
+      `${error.message} '${error.field}'`
+    );
+
+    return response.send(res);
   }
 
-  if (error instanceof TokenExpiredError) {
-    return response.status(401).json({
-      success: false,
-      message: 'Token expired',
-      data: null,
-    });
+  if (
+    error instanceof TokenExpiredError ||
+    error instanceof JsonWebTokenError
+  ) {
+    const response = new ApiErrorResponse(403, 'Invalid or expired token');
+    return response.send(res);
   }
 
-  if (error instanceof JsonWebTokenError) {
-    return response.status(401).json({
-      success: false,
-      message: 'Token invalid',
-      data: null,
-    });
+  if (error instanceof Error) {
+    const response = new ApiErrorResponse(400, error.message);
+    return response.send(res);
   }
-  console.log(error);
 
-  return response.status(500).json({
-    success: false,
-    message: 'Internal server error',
-    data: null,
-  });
+  systemLogs.error(error);
+
+  const response = new ApiErrorResponse(500, 'Internal server error');
+  return response.send(res);
 }
