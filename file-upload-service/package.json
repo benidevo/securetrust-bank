@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "aws-sdk": "^2.1397.0",
     "celebrate": "^15.0.1",
     "cors": "^2.8.5",
     "dotenv": "^16.1.4",
