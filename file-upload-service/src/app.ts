@@ -7,7 +7,11 @@ import { morganMiddleware, systemLogs } from './utils/logger';
 import rateLimiter from './middlewares/rateLimiter';
 import errorHandler from './middlewares/errorHandler';
 import routes from './routes';
+import { container } from 'tsyringe';
+import DeleteFileConsumer from './consumers/deleteFile';
+import { DELETE_UPLOADED_FILE_QUEUE } from './utils/constants';
 
+const deleteFileConsumer = container.resolve(DeleteFileConsumer);
 export default class App {
   private app: express.Application;
 
@@ -33,6 +37,8 @@ export default class App {
 
   async listen() {
     const { port, nodeEnv } = environment;
+
+    await deleteFileConsumer.listenOnQueue(DELETE_UPLOADED_FILE_QUEUE);
 
     this.app.listen(port, () => {
       systemLogs.info(`Server running in ${nodeEnv} mode on port ${port}`);

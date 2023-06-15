@@ -12,6 +12,11 @@ while ! nc -z aws-emulator 4566; do
 done
 echo "AWS S3 Is Now Available"
 
+echo "Waiting For RabbitMQ..."
+while ! nc -z rabbitmq 5672; do
+  sleep 0.1
+done
+
 status=$?
 if [ $status -eq 0 ]; then
     echo "Initializing File Upload Service"

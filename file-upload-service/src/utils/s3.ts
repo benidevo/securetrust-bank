@@ -72,6 +72,16 @@ class S3FileUploader {
     return this.s3.upload(uploadParams).promise();
   }
 
+  async deleteFile(keyName: string): Promise<void> {
+    const deleteParams = {
+      Bucket: this.bucketName,
+      Key: keyName,
+    };
+
+    await this.s3.deleteObject(deleteParams).promise();
+    systemLogs.info(`File "${keyName}" deleted successfully`);
+  }
+
   async createBucketIfNotExists(bucketName: string): Promise<void> {
     const bucketExists = await this.bucketExists(bucketName);
 
@@ -97,7 +107,6 @@ class S3FileUploader {
         const file_url = response.Location;
         return file_url.replace('aws-emulator', 'localhost');
       }
-
       return response.Location;
     } catch (error) {
       systemLogs.error('Error uploading file:', error);

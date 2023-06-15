@@ -11,4 +11,5 @@ export default {
   AWSRegion: process.env.AWS_REGION || 'eu-west-1',
   AWSS3EmulatorEndpoint: 'http://aws-emulator:4566',
   AWSBucketName: process.env.AWS_BUCKET_NAME || 'my-bucket',
+  amqpUrl: process.env.AMQP_URL || 'amqp://secureTrust:Test4321@rabbitmq:5672',
 };
