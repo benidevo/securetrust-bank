@@ -1,5 +1,6 @@
 from django.urls import path
 
+from apps.user_auth.views.auth_user import AuthUserView
 from apps.user_auth.views.login import LoginView
 from apps.user_auth.views.logout import LogoutView
 from apps.user_auth.views.password import ForgotPasswordView, ResetPasswordView
@@ -24,4 +25,5 @@ urlpatterns = [
     path("logout", LogoutView.as_view(), name="logout"),
     path("token", DeleteRefreshTokenView.as_view(), name="delete-refresh-token"),
     path("token/refresh", RefreshTokenView.as_view(), name="refresh-token"),
+    path("user", AuthUserView.as_view(), name="auth-user"),
 ]

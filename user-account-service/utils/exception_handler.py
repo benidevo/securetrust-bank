@@ -2,6 +2,7 @@ import logging
 
 from rest_framework.exceptions import (
     AuthenticationFailed,
+    NotAuthenticated,
     NotFound,
     PermissionDenied,
     ValidationError,
@@ -9,6 +10,7 @@ from rest_framework.exceptions import (
 from rest_framework.views import exception_handler
 
 from utils import Response
+from utils.exceptions import AppException
 
 
 def custom_exception_handler(exc, context):
@@ -24,6 +26,8 @@ def custom_exception_handler(exc, context):
         isinstance(exc, NotFound)
         or isinstance(exc, PermissionDenied)
         or isinstance(exc, AuthenticationFailed)
+        or isinstance(exc, NotAuthenticated)
+        or isinstance(exc, AppException)
     ):
         logging.error(exc)
         return Response(success=False, message=exc.detail, status=exc.status_code)
