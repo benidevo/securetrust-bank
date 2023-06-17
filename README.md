@@ -23,6 +23,7 @@ The backend API consists of four microservices:
 3. Bank Account Service: Manages the creation of bank accounts, sets initial transaction limits, and processes account upgrades.
 4. Transaction Service: Handles sending and receiving money between bank accounts, enforces transaction limits, and manages transaction history.
 5. File Upload Service: This microservice is responsible for handling file uploads within the application. It provides the functionality to securely upload files, store them in a storage system, and retrieve them when needed.
+6. Search Service: Enables fast and accurate search functionality across the application using Elasticsearch. Users can easily search for users, bank accounts, transactions, and other relevant entities, enhancing the overall user experience.
 
 ## Features
 
@@ -74,6 +75,10 @@ The technology stack used in this project is as follows:
   - Node.js
   - Express
   - AWS S3
+  - Docker
+
+- Search Service:
+  - Elasticsearch
   - Docker
 
 ## Docs

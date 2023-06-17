@@ -13,15 +13,16 @@ services:
       - static_volume:/app/staticfiles
       - media_volume:/app/mediafiles
     depends_on:
-      - user-account-service
+      - user-account
+      - file-upload
     networks:
       - secure-bank
 
-  user-account-service:
+  user-account:
     build:
       context: ./user-account-service
       dockerfile: docker/Dockerfile
-    container_name: stb-user-account-service
+    container_name: stb-user-account
     volumes:
       - ./user-account-service:/app:z
       - static_volume:/app/staticfiles
@@ -46,11 +47,11 @@ services:
     networks:
       - secure-bank
 
-  notification-service:
+  notification:
     build:
       context: ./notification-service
       dockerfile: docker/Dockerfile
-    container_name: stb-notification-service
+    container_name: stb-notification
     volumes:
       - /app/node_modules
       - ./notification-service:/app:z
@@ -63,11 +64,11 @@ services:
     networks:
       - secure-bank
 
-  file-upload-service:
+  file-upload:
     build:
       context: ./file-upload-service
       dockerfile: docker/Dockerfile
-    container_name: stb-file-upload-service
+    container_name: stb-file-upload
     volumes:
       - /app/node_modules
       - ./file-upload-service:/app:z
@@ -119,12 +120,23 @@ services:
     networks:
       - secure-bank
 
+  search:
+    build:
+      context: ./search-service
+      dockerfile: docker/Dockerfile
+    container_name: stb-search
+    volumes:
+      - search-data:/usr/share/elasticsearch/data
+    networks:
+      - secure-bank
+
 volumes:
   rabbitmq-data:
   user_account_db_data: {}
   media_volume:
   static_volume:
   aws-emulator-data:
+  search-data:
 
 networks:
     secure-bank:
