@@ -16,7 +16,7 @@ SecureTrust Bank is an online banking platform that allows users to create bank 
 
 SecureTrust Bank provides a comprehensive backend API for managing user accounts, authentication, account verification, bank account creation, transaction management, and user profile management. The platform enforces daily transaction limits for newly created accounts and offers an account upgrade process upon user request and verification.
 
-The backend API consists of four microservices:
+The backend API consists of six microservices:
 
 1. User Account Service: Responsible for user authentication, account verification, and user profile management.
 2. Notification Service: Handles sending verification codes and notifications to users via email.

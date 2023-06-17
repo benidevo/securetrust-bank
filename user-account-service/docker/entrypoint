@@ -37,6 +37,13 @@ while ! nc -z redis 6379; do
 done
 echo "Redis is now available"
 
+# wait for Search Service
+echo "Waiting for Search Service..."
+while ! nc -z search 9200; do
+  sleep 0.1
+done
+echo "Search Service is now available"
+
 if [ -n "${IS_LOCAL:-}" ] && [ "${IS_LOCAL}" = "true" ]; then
     settings_module="core.settings.local"
 else

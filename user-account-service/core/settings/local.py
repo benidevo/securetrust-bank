@@ -12,3 +12,5 @@ CSRF_TRUSTED_ORIGINS = ["http://localhost:8080"]
 
 DOMAIN = os.environ.get("DOMAIN", "localhost")
 SITE_NAME = "securetrustbank"
+
+JWT_AUTH.update({"JWT_ACCESS_TOKEN_EXPIRATION": timedelta(hours=3)})  # noqa: F405

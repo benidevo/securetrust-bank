@@ -1,5 +1,4 @@
 from enum import Enum
-from uuid import uuid4 as uuid
 
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.core import validators
@@ -22,8 +21,7 @@ class Roles(Enum):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    pkid = models.BigAutoField(primary_key=True, editable=False)
-    id = models.UUIDField(default=uuid, editable=False, unique=True)
+    id = models.BigAutoField(primary_key=True, editable=False)
     email = models.EmailField(
         verbose_name=_("Email Address"), unique=True, max_length=100
     )
@@ -70,8 +68,7 @@ class Profile(models.Model):
             _("Other"),
         )
 
-    pkid = models.BigAutoField(primary_key=True, editable=False)
-    id = models.UUIDField(default=uuid, editable=False, unique=True)
+    id = models.BigAutoField(primary_key=True, editable=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     avatar_url = models.URLField(blank=True, null=True, verbose_name=_("avatar"))
     gender = models.CharField(
@@ -97,15 +94,18 @@ class Profile(models.Model):
         verbose_name=_("Country"), default="NGA", blank=True, null=True
     )
     date_of_birth = models.DateField(_("Date of Birth"), blank=True, null=True)
-    nin = models.IntegerField(
+    nin = models.CharField(
         _("National Identification Number"),
+        max_length=11,
         blank=True,
+        unique=True,
         null=True,
         validators=[
-            validators.MaxValueValidator(99999999999),
-            validators.MinValueValidator(10000000000),
+            validators.MinLengthValidator(11),
+            validators.MaxLengthValidator(11),
         ],
     )
+
     created_at = models.DateTimeField(_("Created At"), auto_now_add=True)
     updated_at = models.DateTimeField(_("Updated At"), auto_now=True)
 

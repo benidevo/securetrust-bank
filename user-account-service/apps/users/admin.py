@@ -13,7 +13,6 @@ class UserAdmin(BaseUserAdmin):
     model = User
 
     list_display = [
-        "pkid",
         "id",
         "email",
         "first_name",
@@ -22,7 +21,7 @@ class UserAdmin(BaseUserAdmin):
         "is_active",
     ]
 
-    list_display_links = ["pkid", "id", "email"]
+    list_display_links = ["id", "email"]
 
     list_filter = ["email", "is_staff", "is_active"]
 
@@ -63,7 +62,6 @@ class UserAdmin(BaseUserAdmin):
 
 class ProfileAdmin(admin.ModelAdmin):
     list_display = [
-        "pkid",
         "id",
         "user",
         "gender",
@@ -72,8 +70,8 @@ class ProfileAdmin(admin.ModelAdmin):
         "country",
         "city",
     ]
-    list_display_links = ["pkid", "id", "user"]
-    list_filter = ["id", "pkid"]
+    list_display_links = ["id", "user"]
+    list_filter = ["id"]
 
 
 admin.site.register(Profile, ProfileAdmin)

@@ -33,8 +33,7 @@ THIRD_PARTY_APPS = [
     "phonenumber_field",
     "drf_yasg",
     "corsheaders",
-    # "django_elasticsearch_dsl",
-    # "django_elasticsearch_dsl_drf",
+    "django_elasticsearch_dsl",
 ]
 
 LOCAL_APPS = ["apps.user_auth", "apps.users"]
@@ -176,4 +175,12 @@ LOGGING = {
         }
     },
     "root": {"level": "INFO", "handlers": ["console"]},
+}
+
+ELASTICSEARCH_HOST = os.environ.get("ELASTICSEARCH_HOST", "search")
+ELASTICSEARCH_PORT = os.environ.get("ELASTICSEARCH_PORT", 9200)
+ELASTICSEARCH_DSL = {
+    "default": {
+        "hosts": f"{ELASTICSEARCH_HOST}:{ELASTICSEARCH_PORT}",
+    },
 }

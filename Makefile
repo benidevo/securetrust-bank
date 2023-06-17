@@ -43,6 +43,9 @@ show-logs-rabbitmq:
 show-logs-search-service:
 	docker compose logs search
 
+user-account-search-index:
+	docker compose exec user-account python manage.py search_index --rebuild
+
 redis-cli:
 	docker-compose exec redis redis-cli
 

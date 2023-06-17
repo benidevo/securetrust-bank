@@ -10,13 +10,13 @@ from utils.exceptions import AppException
 User = get_user_model()
 
 
-class AuthUserView(generics.UpdateAPIView, generics.RetrieveAPIView):
+class AuthUserView(generics.RetrieveUpdateAPIView):
     model = User
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
-        obj = self.model.objects.filter(pk=self.request.user.pkid).first()
+        obj = self.model.objects.filter(pk=self.request.user.id).first()
         if not obj:
             raise PermissionDenied()
         return obj

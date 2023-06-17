@@ -1,5 +1,3 @@
-import logging
-
 from django.contrib.auth import get_user_model
 from rest_framework import generics, status
 from rest_framework.exceptions import AuthenticationFailed, NotFound

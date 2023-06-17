@@ -34,6 +34,7 @@ services:
       - user-account-db
       - redis
       - rabbitmq
+      - search
     networks:
       - secure-bank
 
