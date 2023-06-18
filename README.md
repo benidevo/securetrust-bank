@@ -43,7 +43,6 @@ The technology stack used in this project is as follows:
 - User Account Service:
   - Python
   - Django
-  - Django Rest Framework
   - Redis
   - PostgreSQL
   - RabbitMQ
@@ -60,7 +59,7 @@ The technology stack used in this project is as follows:
   - Java
   - Spring Boot
   - Redis
-  - PostgreSQL
+  - MySQL
   - Docker
 
 - Transaction Service:
