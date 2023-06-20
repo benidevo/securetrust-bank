@@ -15,6 +15,7 @@ services:
     depends_on:
       - user-account
       - file-upload
+      - bank-account
     networks:
       - secure-bank
 
@@ -45,6 +46,37 @@ services:
       - user_account_db_data:/var/lib/postgresql/data
     env_file:
       - ./.env
+    networks:
+      - secure-bank
+
+  bank-account:
+    restart: always
+    build:
+      context: ./bank-account-service
+      dockerfile: docker/Dockerfile
+    container_name: stb-bank-account
+    expose:
+      - "8080"
+    volumes:
+      - ./bank-account-service/src:/app/src
+      - ./bank-account-service/pom.xml:/app/pom.xml
+      - m2_cache:/root/.m2
+    depends_on:
+      - bank-account-db
+    networks:
+      - secure-bank
+
+  bank-account-db:
+    image: mysql:8.0
+    container_name: stb-bank-account-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: mysecretpassword
+      MYSQL_DATABASE: bank_account_db
+    volumes:
+      - bank_account_db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
     networks:
       - secure-bank
 
@@ -134,10 +166,12 @@ services:
 volumes:
   rabbitmq-data:
   user_account_db_data: {}
+  bank_account_db_data: {}
   media_volume:
   static_volume:
   aws-emulator-data:
   search-data:
+  m2_cache:
 
 networks:
     secure-bank:

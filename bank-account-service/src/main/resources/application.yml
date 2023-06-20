@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:mysql://bank-account-db:3306/bank_account_db
+    username: root
+    password: mysecretpassword
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
+springdoc:
+  swagger-ui:
+    path: "/api/v1/accounts/api-docs"
+
+logging:
+  level:
+    root: warn

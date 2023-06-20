@@ -28,6 +28,7 @@ user-account-db-migrate:
 
 show-logs-redis:
 	docker compose logs redis
+
 show-logs-notification-service:
 	docker compose logs notification
 
@@ -42,6 +43,12 @@ show-logs-rabbitmq:
 
 show-logs-search-service:
 	docker compose logs search
+
+show-logs-bank-account:
+	docker compose logs bank-account
+
+show-logs-bank-account-db:
+	docker compose logs bank-account-db
 
 user-account-search-index:
 	docker compose exec user-account python manage.py search_index --rebuild
