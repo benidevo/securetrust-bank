@@ -31,6 +31,8 @@ services:
     restart: always
     env_file:
       - ./user-account-service/.env
+    expose:
+      - "8000"
     depends_on:
       - user-account-db
       - redis
@@ -46,6 +48,8 @@ services:
       - user_account_db_data:/var/lib/postgresql/data
     env_file:
       - ./.env
+    expose:
+      - "5432"
     networks:
       - secure-bank
 
@@ -75,8 +79,8 @@ services:
       MYSQL_DATABASE: bank_account_db
     volumes:
       - bank_account_db_data:/var/lib/mysql
-    ports:
-      - "3306:3306"
+    expose:
+      - "3306"
     networks:
       - secure-bank
 
@@ -126,7 +130,7 @@ services:
     image: localstack/localstack:2.1.0
     container_name: aws-emulator
     ports:
-      - 4566:4566
+      - "4566:4566"
     environment:
       - SERVICES=s3
     volumes:
@@ -145,7 +149,7 @@ services:
     container_name: stb-queue
     hostname: stb-queue
     ports:
-      - 15672:15672
+      - "15672:15672"
     env_file:
       "./.env"
     volumes:
@@ -160,6 +164,15 @@ services:
     container_name: stb-search
     volumes:
       - search-data:/usr/share/elasticsearch/data
+    networks:
+      - secure-bank
+
+  db-dashboard:
+    image: adminer:4.8.1
+    container_name: stb-db-dashboard
+    restart: always
+    ports:
+      - "8880:8080"
     networks:
       - secure-bank
 
