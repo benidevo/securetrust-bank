@@ -23,13 +23,13 @@ public class BankAccount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", nullable = false)
+    @Column(name = "user_id", nullable = false, unique = true)
     private Long userId;
 
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "number", nullable = false)
+    @Column(name = "number", nullable = false, unique = true)
     private String number;
 
     @Column(name = "is_active", nullable = false, columnDefinition = "BOOLEAN DEFAULT true")

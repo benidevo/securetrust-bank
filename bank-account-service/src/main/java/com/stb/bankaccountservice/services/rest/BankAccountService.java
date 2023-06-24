@@ -1,4 +1,4 @@
-package com.stb.bankaccountservice.services;
+package com.stb.bankaccountservice.services.rest;
 
 import com.stb.bankaccountservice.dtos.CreateBankAccountDTO;
 import com.stb.bankaccountservice.entities.BankAccount;
