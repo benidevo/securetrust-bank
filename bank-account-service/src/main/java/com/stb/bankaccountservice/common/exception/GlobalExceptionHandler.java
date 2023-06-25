@@ -1,10 +1,13 @@
 package com.stb.bankaccountservice.common.exception;
 
 import com.stb.bankaccountservice.utils.apiResponse.ApiResponse;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Component;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -44,4 +47,33 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(EntityExistsException.class)
+    public ResponseEntity<ApiResponse> handleEntityExistsException(EntityExistsException ex) {
+        return new ResponseEntity<>(ApiResponse.builder()
+                .success(false)
+                .message(ex.getMessage())
+                .build(),
+                HttpStatus.BAD_REQUEST
+        );
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ApiResponse> handleMethodNotSupportedException(HttpRequestMethodNotSupportedException ex) {
+        return new ResponseEntity<>(ApiResponse.builder()
+                .success(false)
+                .message(ex.getMessage())
+                .build(),
+                HttpStatus.METHOD_NOT_ALLOWED
+        );
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        return new ResponseEntity<>(ApiResponse.builder()
+                .success(false)
+                .message("Required request body is missing")
+                .build(),
+                HttpStatus.BAD_REQUEST
+        );
+    }
 }

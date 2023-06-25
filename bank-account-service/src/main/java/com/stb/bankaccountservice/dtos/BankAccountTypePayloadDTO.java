@@ -18,5 +18,6 @@ public class BankAccountTypePayloadDTO {
     @DecimalMin(value = "10000.00")
     private BigDecimal transactionLimit;
 
+    // TODO: add validation
     private boolean unlimited = false;
 }

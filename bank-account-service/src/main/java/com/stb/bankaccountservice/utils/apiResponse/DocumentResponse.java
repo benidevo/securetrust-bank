@@ -1,18 +1,15 @@
 package com.stb.bankaccountservice.utils.apiResponse;
 
-
-import com.stb.bankaccountservice.entities.BankAccountType;
+import com.stb.bankaccountservice.entities.Document;
 import lombok.*;
 
-
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@EqualsAndHashCode
-@Builder
-public class BankAccountTypeResponse<T extends BankAccountType>{
+public class DocumentResponse <T extends Document> {
     private boolean success;
     private String message;
     private T data;

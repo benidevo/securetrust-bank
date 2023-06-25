@@ -15,7 +15,22 @@ public class AccountNumberGenerator {
         String combinedInput = accountName.trim() + System.currentTimeMillis();
         byte[] hashBytes = generateHash(combinedInput);
         String truncatedHash = truncateHash(hashBytes);
-        return ACCOUNT_NUMBER_PREFIX + truncatedHash;
+        String paddedAccountNumber = padAccountNumber(truncatedHash);
+        return ACCOUNT_NUMBER_PREFIX + paddedAccountNumber;
+    }
+
+    private String padAccountNumber(String accountNumber) {
+        if (accountNumber.length() >= ACCOUNT_NUMBER_LENGTH) {
+            return accountNumber.substring(0, ACCOUNT_NUMBER_LENGTH);
+        } else {
+            int paddingLength = ACCOUNT_NUMBER_LENGTH - accountNumber.length();
+            StringBuilder paddedNumber = new StringBuilder(accountNumber);
+            for (int i = 0; i < paddingLength; i++) {
+                int randomDigit = (int) (Math.random() * 10);
+                paddedNumber.append(randomDigit);
+            }
+            return paddedNumber.toString();
+        }
     }
 
     private byte[] generateHash(String input) {
@@ -29,7 +44,7 @@ public class AccountNumberGenerator {
 
     private String truncateHash(byte[] hashBytes) {
         String hashString = bytesToHexString(hashBytes);
-        int endIndex = Math.min(hashString.length(), ACCOUNT_NUMBER_LENGTH - 1);
+        int endIndex = Math.min(hashString.length(), ACCOUNT_NUMBER_LENGTH);
         return hashString.substring(0, endIndex).replaceAll("[^0-9]", "");
     }
 

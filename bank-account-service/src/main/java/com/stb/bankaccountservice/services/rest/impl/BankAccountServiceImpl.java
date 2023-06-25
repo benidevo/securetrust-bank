@@ -1,16 +1,19 @@
-package com.stb.bankaccountservice.services.rest.imp;
+package com.stb.bankaccountservice.services.rest.impl;
 
 import com.stb.bankaccountservice.dtos.CreateBankAccountDTO;
+import com.stb.bankaccountservice.dtos.UpdateBankAccountDTO;
 import com.stb.bankaccountservice.entities.BankAccount;
 import com.stb.bankaccountservice.entities.BankAccountType;
 import com.stb.bankaccountservice.repositories.BankAccountRepository;
 import com.stb.bankaccountservice.repositories.BankAccountTypeRepository;
 import com.stb.bankaccountservice.services.rest.BankAccountService;
 import com.stb.bankaccountservice.utils.AccountNumberGenerator;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,11 +36,17 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     @Override
     public BankAccount create(CreateBankAccountDTO createBankAccountDTO) {
+        Optional<Object> existingBankAccount = bankAccountRepository.findByUserId(createBankAccountDTO.getUserId());
+        if (existingBankAccount.isPresent()) {
+            throw new EntityExistsException("This user already has a bank account");
+        }
+
         Optional<BankAccountType> bankAccountType = bankAccountTypeRepository.findByName(BASIC_ACCOUNT_TYPE);
         if (bankAccountType.isEmpty()) {
             BankAccountType basicAccountType = BankAccountType.builder()
                     .name(BASIC_ACCOUNT_TYPE)
                     .transactionLimit(BASIC_ACCOUNT_TYPE_TRANSACTION_LIMIT)
+                    .unlimited(false)
                     .build();
             bankAccountType = Optional.of(bankAccountTypeRepository.save(basicAccountType));
         }
@@ -48,13 +57,18 @@ public class BankAccountServiceImpl implements BankAccountService {
                 .userId(createBankAccountDTO.getUserId())
                 .number(accountNumber)
                 .accountType(bankAccountType.get())
+                .balance(BigDecimal.valueOf(0.0))
+                .isActive(true)
                 .build();
 
         return bankAccountRepository.save(bankAccount);
     }
 
     @Override
-    public BankAccount update(BankAccount bankAccount) {
+    public BankAccount update(Long id, UpdateBankAccountDTO updateBankAccountDTO) {
+        BankAccount bankAccount = this.get(id);
+        bankAccount.setName(updateBankAccountDTO.getName());
+        bankAccount.setIsActive(updateBankAccountDTO.isActive());
 
         return bankAccountRepository.save(bankAccount);
     }

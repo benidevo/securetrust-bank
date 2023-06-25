@@ -1,4 +1,4 @@
-package com.stb.bankaccountservice.services.rest.imp;
+package com.stb.bankaccountservice.services.rest.impl;
 
 import com.stb.bankaccountservice.dtos.BankAccountTypePayloadDTO;
 import com.stb.bankaccountservice.entities.BankAccountType;

@@ -1,20 +1,20 @@
 package com.stb.bankaccountservice.services.rest;
 
-import com.stb.bankaccountservice.dtos.CreateDocumentDTO;
+import com.stb.bankaccountservice.dtos.DocumentPayloadDTO;
 import com.stb.bankaccountservice.entities.Document;
 
 import java.util.List;
 
 public interface DocumentService {
-    Document create(CreateDocumentDTO createDocumentDTO);
+    Document create(Long bankAccountId, DocumentPayloadDTO documentPayloadDTO);
 
-    Document update(Document document);
+    Document update(Long bankAccountId, Long documentId, DocumentPayloadDTO documentPayloadDTO);
 
-    Document get(Long id);
+    Document get(Long bankAccountId, Long documentId);
 
     Document getByDocUrl(String docUrl);
 
-    List<Document> list();
+    List<Document> list(Long bankAccountId);
 
-    void delete(Long id);
+    void delete(Long bankAccountId, Long documentId);
 }

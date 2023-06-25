@@ -1,6 +1,7 @@
 package com.stb.bankaccountservice.dtos;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 @ToString
@@ -8,10 +9,11 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateDocumentDTO {
-    @NotNull
+public class DocumentPayloadDTO {
+    @NotEmpty
     private String type;
 
-    @NotNull
+    @NotEmpty
+    @Size(min = 10)
     private String docUrl;
 }

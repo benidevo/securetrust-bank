@@ -34,9 +34,6 @@ public class BankAccountType {
     @Column(name = "unlimited", nullable = false)
     private Boolean unlimited;
 
-    @OneToMany(mappedBy = "accountType")
-    private List<BankAccount> bankAccounts;
-
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp

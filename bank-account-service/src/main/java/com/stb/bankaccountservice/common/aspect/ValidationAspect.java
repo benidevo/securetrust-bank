@@ -15,7 +15,6 @@ import java.util.List;
 @Aspect
 @Component
 public class ValidationAspect {
-
     @Before("@annotation(com.stb.bankaccountservice.common.annotation.HandleValidationErrors)")
     public void handleValidationErrors(JoinPoint joinPoint) {
         Object[] args = joinPoint.getArgs();
