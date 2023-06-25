@@ -83,6 +83,7 @@ The technology stack used in this project is as follows:
 ## Docs
 
 - User Account Service: <http://localhost/api/v1/user-account/api-docs>
+- Bank Account Service: <http://localhost/api/v1/bank-account/api-docs>
 
 ## License
 

@@ -1,9 +1,10 @@
 package com.stb.bankaccountservice.services.rest.imp;
 
-import com.stb.bankaccountservice.dtos.CreateBankAccountTypeDTO;
+import com.stb.bankaccountservice.dtos.BankAccountTypePayloadDTO;
 import com.stb.bankaccountservice.entities.BankAccountType;
 import com.stb.bankaccountservice.repositories.BankAccountTypeRepository;
 import com.stb.bankaccountservice.services.rest.BankAccountTypeService;
+
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,16 +20,29 @@ public class BankAccountTypeServiceImpl implements BankAccountTypeService {
         this.bankAccountTypeRepository = bankAccountTypeRepository;
     }
     @Override
-    public BankAccountType create(CreateBankAccountTypeDTO createBankAccountTypeDTO) {
-        BankAccountType bankAccountType = BankAccountType.builder()
+    public BankAccountType create(BankAccountTypePayloadDTO createBankAccountTypeDTO) {
+        BankAccountType bankAccountType = this.bankAccountTypeRepository.findByName(createBankAccountTypeDTO.getName())
+                .orElse(null);
+        if (bankAccountType != null) {
+            return bankAccountType;
+        }
+
+        BankAccountType newBankAccountType = BankAccountType.builder()
                 .name(createBankAccountTypeDTO.getName())
                 .transactionLimit(createBankAccountTypeDTO.getTransactionLimit())
+                .unlimited(createBankAccountTypeDTO.isUnlimited())
                 .build();
-        return bankAccountTypeRepository.save(bankAccountType);
+
+        return bankAccountTypeRepository.save(newBankAccountType);
     }
 
     @Override
-    public BankAccountType update(BankAccountType bankAccountType) {
+    public BankAccountType update(Long id, BankAccountTypePayloadDTO updateBankAccountTypeDTO) {
+        BankAccountType bankAccountType = this.get(id);
+
+        bankAccountType.setName(updateBankAccountTypeDTO.getName());
+        bankAccountType.setTransactionLimit(updateBankAccountTypeDTO.getTransactionLimit());
+        bankAccountType.setUnlimited(updateBankAccountTypeDTO.isUnlimited());
         return bankAccountTypeRepository.save(bankAccountType);
     }
 

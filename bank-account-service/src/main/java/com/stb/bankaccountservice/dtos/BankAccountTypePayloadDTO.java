@@ -1,21 +1,22 @@
 package com.stb.bankaccountservice.dtos;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import java.math.BigDecimal;
-
 
 @Setter
 @Getter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateBankAccountTypeDTO {
-    @NotNull
+public class BankAccountTypePayloadDTO {
+    @Size(min = 4, max = 50)
+    @NotEmpty
     private String name;
 
     @NotNull
-    @Positive
+    @DecimalMin(value = "10000.00")
     private BigDecimal transactionLimit;
+
+    private boolean unlimited = false;
 }

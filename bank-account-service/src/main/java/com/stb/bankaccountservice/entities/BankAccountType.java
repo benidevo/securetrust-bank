@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -26,22 +28,22 @@ public class BankAccountType {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @Column(name = "transaction_limit", nullable = false, columnDefinition = "DECIMAL(10,2) default '0.0'")
+    @Column(name = "transaction_limit", nullable = false)
     private BigDecimal transactionLimit;
 
-    @Column(name = "unlimited", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
+    @Column(name = "unlimited", nullable = false)
     private Boolean unlimited;
 
     @OneToMany(mappedBy = "accountType")
     private List<BankAccount> bankAccounts;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
-    @CreatedDate
+    @CreationTimestamp
     private Date createdAt;
 
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
-    @LastModifiedDate
+    @UpdateTimestamp
     private Date updatedAt;
 }

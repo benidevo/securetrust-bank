@@ -1,9 +1,12 @@
 package com.stb.bankaccountservice.utils;
 
+import org.springframework.stereotype.Component;
+
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+@Component
 public class AccountNumberGenerator {
     private static final int ACCOUNT_NUMBER_LENGTH = 10;
     private static final String ACCOUNT_NUMBER_PREFIX = "2";
