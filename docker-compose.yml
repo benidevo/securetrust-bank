@@ -61,12 +61,12 @@ services:
     container_name: stb-bank-account
     expose:
       - "8080"
-    ports:
-      - "8080:8080"
     volumes:
       - ./bank-account-service/src:/app/src
       - ./bank-account-service/pom.xml:/app/pom.xml
       - m2_cache:/root/.m2
+    env_file:
+      - ./bank-account-service/.env
     depends_on:
       - bank-account-db
     networks:
@@ -81,6 +81,8 @@ services:
       MYSQL_DATABASE: bank_account_db
     volumes:
       - bank_account_db_data:/var/lib/mysql
+    depends_on:
+      - rabbitmq
     expose:
       - "3306"
     networks:

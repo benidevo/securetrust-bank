@@ -16,6 +16,13 @@ if [ -z "$MYSQL_PASSWORD" ]; then
   MYSQL_PASSWORD="mysecretpassword"
 fi
 
+# wait for RabbitMQ
+echo "Waiting for RabbitMQ..."
+while ! nc -z rabbitmq 5672; do
+  sleep 0.1
+done
+echo "RabbitMQ is now available"
+
 check_mysql() {
     echo "Checking if MySQL is ready..."
     until mysqladmin ping -h "$MYSQL_HOST" -P "$MYSQL_PORT" -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" --silent; do

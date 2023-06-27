@@ -4,7 +4,9 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 
 from apps.users.serializers import UserSerializer
+from core.rabbitmq import RabbitMQClient
 from utils import Response
+from utils.constants import CREATE_BANK_ACCOUNT_QUEUE
 from utils.exceptions import AppException
 
 User = get_user_model()
@@ -14,6 +16,7 @@ class AuthUserView(generics.RetrieveUpdateAPIView):
     model = User
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
+    rabbitmq_client = RabbitMQClient()
 
     def get_object(self):
         obj = self.model.objects.filter(pk=self.request.user.id).first()
@@ -49,6 +52,11 @@ class AuthUserView(generics.RetrieveUpdateAPIView):
         serializer = self.get_serializer(user, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+
+        if user.profile.is_complete:
+            message = {"userId": user.id, "name": f"{user.first_name} {user.last_name}"}
+            with self.rabbitmq_client as client:
+                client.publish_message(queue=CREATE_BANK_ACCOUNT_QUEUE, message=message)
 
         return Response(
             message="User updated", data=serializer.data, status=status.HTTP_200_OK
