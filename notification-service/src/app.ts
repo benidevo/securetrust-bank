@@ -11,12 +11,16 @@ import {
   EMAIL_VERIFICATION_QUEUE,
   RESET_PASSWORD_QUEUE,
   REGISTRATION_COMPLETED_QUEUE,
+  NEW_BANK_ACCOUNT_NOTIFICATION_QUEUE,
 } from './utils/constants';
 import container from './config/container';
 
 const verifyEmailConsumer = container.resolve(NotificationServiceConsumer);
 const resetPasswordConsumer = container.resolve(NotificationServiceConsumer);
 const registrationCompletedConsumer = container.resolve(
+  NotificationServiceConsumer
+);
+const newBankAccountNotificationConsumer = container.resolve(
   NotificationServiceConsumer
 );
 
@@ -60,6 +64,9 @@ export default class App {
       await resetPasswordConsumer.listenOnQueue(RESET_PASSWORD_QUEUE);
       await registrationCompletedConsumer.listenOnQueue(
         REGISTRATION_COMPLETED_QUEUE
+      );
+      await newBankAccountNotificationConsumer.listenOnQueue(
+        NEW_BANK_ACCOUNT_NOTIFICATION_QUEUE
       );
     } catch (error) {
       const message = `Error consuming messages: ${error}`;

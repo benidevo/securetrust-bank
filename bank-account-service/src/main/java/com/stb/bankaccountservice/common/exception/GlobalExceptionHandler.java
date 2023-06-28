@@ -1,8 +1,10 @@
 package com.stb.bankaccountservice.common.exception;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.stb.bankaccountservice.utils.apiResponse.ApiResponse;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -14,6 +16,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 @Component
 @ControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ApiResponse> handleValidationException(ValidationException ex) {
@@ -75,5 +78,10 @@ public class GlobalExceptionHandler {
                 .build(),
                 HttpStatus.BAD_REQUEST
         );
+    }
+
+    @ExceptionHandler(JsonProcessingException.class)
+    public void handleJsonProcessingException(JsonProcessingException ex) {
+        log.error("Error while processing JSON", ex);
     }
 }

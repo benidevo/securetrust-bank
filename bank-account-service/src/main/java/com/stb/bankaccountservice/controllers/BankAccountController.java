@@ -1,5 +1,6 @@
 package com.stb.bankaccountservice.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.stb.bankaccountservice.common.annotation.HandleValidationErrors;
 import com.stb.bankaccountservice.dtos.CreateBankAccountDTO;
 import com.stb.bankaccountservice.dtos.UpdateBankAccountDTO;
@@ -34,7 +35,7 @@ public class BankAccountController {
     @HandleValidationErrors
     public ResponseEntity<BankAccountResponse<BankAccount>> create(@Valid @RequestBody
                                                                        CreateBankAccountDTO createBankAccountDTO,
-                                                                   BindingResult result) {
+            BindingResult result) throws JsonProcessingException {
         BankAccount bankAccount = bankAccountService.create(createBankAccountDTO);
         BankAccountResponse<BankAccount> response = BankAccountResponse.builder()
                 .success(true)

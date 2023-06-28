@@ -3,6 +3,7 @@ import NotificationServiceConsumer from '../consumers/notificationServiceConsume
 import EmailVerificationService from '../services/emailVerificationService';
 import PasswordResetService from '../services/passwordResetService';
 import RegistrationCompletedService from '../services/registrationCompletedService';
+import NewBankAccountNotificationService from '../services/newBankAccountNotificationService';
 
 // Register the dependencies
 container.register<NotificationServiceConsumer>(NotificationServiceConsumer, {
@@ -20,5 +21,9 @@ container.register<PasswordResetService>(PasswordResetService, {
 container.register<RegistrationCompletedService>(RegistrationCompletedService, {
   useClass: RegistrationCompletedService,
 });
+
+container.register<NewBankAccountNotificationService>(NewBankAccountNotificationService, {
+  useClass: NewBankAccountNotificationService,
+})
 
 export default container;

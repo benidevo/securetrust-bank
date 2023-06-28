@@ -1,15 +1,20 @@
 package com.stb.bankaccountservice.services.rest.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stb.bankaccountservice.dtos.CreateBankAccountDTO;
 import com.stb.bankaccountservice.dtos.UpdateBankAccountDTO;
 import com.stb.bankaccountservice.entities.BankAccount;
 import com.stb.bankaccountservice.entities.BankAccountType;
+import com.stb.bankaccountservice.rabbitMQ.RabbitMQProducer;
 import com.stb.bankaccountservice.repositories.BankAccountRepository;
 import com.stb.bankaccountservice.repositories.BankAccountTypeRepository;
 import com.stb.bankaccountservice.services.rest.BankAccountService;
 import com.stb.bankaccountservice.utils.AccountNumberGenerator;
+import com.stb.bankaccountservice.utils.BankAccountNotification;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,23 +24,27 @@ import java.util.Optional;
 
 import static com.stb.bankaccountservice.utils.Constants.*;
 
+@Slf4j
 @Service
 public class BankAccountServiceImpl implements BankAccountService {
     private final BankAccountRepository bankAccountRepository;
     private final AccountNumberGenerator accountNumberGenerator;
     private final BankAccountTypeRepository bankAccountTypeRepository;
+    private final RabbitMQProducer rabbitMQProducer;
 
     @Autowired
     public BankAccountServiceImpl(BankAccountRepository bankAccountRepository,
                                   AccountNumberGenerator accountNumberGenerator,
-                                  BankAccountTypeRepository bankAccountTypeRepository) {
+            BankAccountTypeRepository bankAccountTypeRepository,
+            RabbitMQProducer rabbitMQProducer) {
         this.bankAccountRepository = bankAccountRepository;
         this.accountNumberGenerator = accountNumberGenerator;
         this.bankAccountTypeRepository = bankAccountTypeRepository;
+        this.rabbitMQProducer = rabbitMQProducer;
     }
 
     @Override
-    public BankAccount create(CreateBankAccountDTO createBankAccountDTO) {
+    public BankAccount create(CreateBankAccountDTO createBankAccountDTO) throws JsonProcessingException {
         Optional<Object> existingBankAccount = bankAccountRepository.findByUserId(createBankAccountDTO.getUserId());
         if (existingBankAccount.isPresent()) {
             throw new EntityExistsException("This user already has a bank account");
@@ -60,8 +69,20 @@ public class BankAccountServiceImpl implements BankAccountService {
                 .balance(BigDecimal.valueOf(0.0))
                 .isActive(true)
                 .build();
+        bankAccount = bankAccountRepository.save(bankAccount);
 
-        return bankAccountRepository.save(bankAccount);
+        ObjectMapper objectMapper = new ObjectMapper();
+        BankAccountNotification bankAccountNotification = BankAccountNotification.builder()
+                .email(createBankAccountDTO.getEmail())
+                .number(bankAccount.getNumber())
+                .name(bankAccount.getName())
+                .build();
+        String message = objectMapper.writeValueAsString(bankAccountNotification);
+
+        if (message != null)
+            rabbitMQProducer.publishMessage(NEW_BANK_ACCOUNT_NOTIFICATION_QUEUE, message);
+
+        return bankAccount;
     }
 
     @Override

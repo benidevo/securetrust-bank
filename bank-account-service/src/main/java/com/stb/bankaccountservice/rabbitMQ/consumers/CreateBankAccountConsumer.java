@@ -1,4 +1,4 @@
-package com.stb.bankaccountservice.consumers;
+package com.stb.bankaccountservice.rabbitMQ.consumers;
 
 import com.stb.bankaccountservice.dtos.CreateBankAccountDTO;
 import com.stb.bankaccountservice.services.rest.BankAccountService;

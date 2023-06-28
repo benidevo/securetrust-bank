@@ -1,5 +1,6 @@
 package com.stb.bankaccountservice.services.rest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.stb.bankaccountservice.dtos.CreateBankAccountDTO;
 import com.stb.bankaccountservice.dtos.UpdateBankAccountDTO;
 import com.stb.bankaccountservice.entities.BankAccount;
@@ -7,7 +8,7 @@ import com.stb.bankaccountservice.entities.BankAccount;
 import java.util.List;
 
 public interface BankAccountService {
-    BankAccount create(CreateBankAccountDTO createBankAccountDTO);
+    BankAccount create(CreateBankAccountDTO createBankAccountDTO) throws JsonProcessingException;
 
     BankAccount update(Long id, UpdateBankAccountDTO updateBankAccountDTO);
 

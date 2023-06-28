@@ -1,5 +1,6 @@
 package com.stb.bankaccountservice.dtos;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
@@ -17,4 +18,8 @@ public class CreateBankAccountDTO {
     @NotEmpty
     @Size(min = 6, max = 50)
     private String name;
+
+    @NotEmpty
+    @Email
+    private String email;
 }

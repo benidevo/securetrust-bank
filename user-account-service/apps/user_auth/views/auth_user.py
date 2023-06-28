@@ -54,7 +54,11 @@ class AuthUserView(generics.RetrieveUpdateAPIView):
         serializer.save()
 
         if user.profile.is_complete:
-            message = {"userId": user.id, "name": f"{user.first_name} {user.last_name}"}
+            message = {
+                "userId": user.id,
+                "name": f"{user.first_name} {user.last_name}",
+                "email": user.email,
+            }
             with self.rabbitmq_client as client:
                 client.publish_message(queue=CREATE_BANK_ACCOUNT_QUEUE, message=message)
 

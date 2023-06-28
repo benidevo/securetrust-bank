@@ -8,6 +8,7 @@ import { systemLogs } from '../utils/logger';
 import environment from '../config/environment';
 import { IRegistrationCompletedMsgDTO } from '../dtos/RegistrationCompletedMsgDTO';
 import { IPasswordResetMsgDTO } from '../dtos/PasswordResetMsgDTO';
+import { INewBankAccountNotifMsg } from '../dtos/INewBankAccountNotifMsg';
 
 class EmailService {
   protected async sendEmail(
@@ -15,7 +16,8 @@ class EmailService {
     payload:
       | IEmailVerificationMsgDTO
       | IRegistrationCompletedMsgDTO
-      | IPasswordResetMsgDTO,
+      | IPasswordResetMsgDTO
+      | INewBankAccountNotifMsg,
     template: string
   ) {
     try {
