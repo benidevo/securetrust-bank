@@ -1,24 +1,19 @@
 #!/bin/bash
 
-if [ -z "$MYSQL_HOST" ]; then
-  MYSQL_HOST="bank-account-db"
-fi
+set -o errexit
+set -o pipefail
+set -o nounset
 
-if [ -z "$MYSQL_PORT" ]; then
-  MYSQL_PORT="3306"
-fi
-
-if [ -z "$MYSQL_USER" ]; then
-  MYSQL_USER="root"
-fi
-
-if [ -z "$MYSQL_PASSWORD" ]; then
-  MYSQL_PASSWORD="mysecretpassword"
-fi
+MYSQL_HOST="${MYSQL_HOST:-bank-account-db}"
+MYSQL_USER="${MYSQL_USER:-root}"
+MYSQL_PORT="${MYSQL_PORT:-3306}"
+MYSQL_PASSWORD="${MYSQL_PASSWORD:-mysecretpassword}"
+RABBITMQ_HOST="${RABBITMQ_HOST:-rabbitmq}"
+RABBITMQ_PORT="${RABBITMQ_PORT:-5672}"
 
 # wait for RabbitMQ
 echo "Waiting for RabbitMQ..."
-while ! nc -z rabbitmq 5672; do
+while ! nc -z "$RABBITMQ_HOST" "$RABBITMQ_PORT"; do
   sleep 0.1
 done
 echo "RabbitMQ is now available"
