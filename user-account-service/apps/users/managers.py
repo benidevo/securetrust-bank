@@ -3,6 +3,8 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.utils.translation import gettext_lazy as _
 
+from utils.constants import ADMIN_USER
+
 
 class CustomUserManager(BaseUserManager):
     def email_validator(self, email):
@@ -38,6 +40,7 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
         extra_fields.setdefault("is_active", True)
+        extra_fields.setdefault("role", ADMIN_USER)
 
         if not password:
             raise ValueError(_("Superuser password must be provided"))

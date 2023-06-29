@@ -12,10 +12,13 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static com.stb.bankaccountservice.utils.Constants.ADMIN_ROLE;
 
 @Tag(name = "Bank Account Type")
 @RestController
@@ -30,6 +33,7 @@ public class BankAccountTypeController {
 
     @Operation(description = "Create a new bank account type")
     @PostMapping
+    @PreAuthorize("hasAuthority('" + ADMIN_ROLE + "')")
     @HandleValidationErrors
     public ResponseEntity<BankAccountTypeResponse<BankAccountType>> create(@Valid @RequestBody
                                                                                BankAccountTypePayloadDTO
@@ -48,6 +52,7 @@ public class BankAccountTypeController {
 
     @Operation(description = "List all bank account types")
     @GetMapping
+    @PreAuthorize("hasAuthority('" + ADMIN_ROLE + "')")
     public ResponseEntity<ApiResponse> list() {
         List<BankAccountType> bankAccountTypes = bankAccountTypeService.list();
         ApiResponse response = ApiResponse.builder()
@@ -74,6 +79,7 @@ public class BankAccountTypeController {
 
     @Operation(description = "Update a bank account type")
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('" + ADMIN_ROLE + "')")
     @HandleValidationErrors
     public ResponseEntity<BankAccountTypeResponse<BankAccountType>> update(@PathVariable Long id,
                                   @Valid @RequestBody BankAccountTypePayloadDTO updateBankAccountTypeDTO,
@@ -90,6 +96,7 @@ public class BankAccountTypeController {
 
     @Operation(description = "Delete a bank account type")
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('" + ADMIN_ROLE + "')")
     public void delete(@PathVariable Long id) {
         bankAccountTypeService.delete(id);
     }

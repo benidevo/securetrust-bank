@@ -2,8 +2,11 @@ package com.stb.bankaccountservice.services.rest.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.stb.bankaccountservice.config.security.BcryptProvider;
 import com.stb.bankaccountservice.dtos.CreateBankAccountDTO;
+import com.stb.bankaccountservice.dtos.SetTransactionPinDTO;
 import com.stb.bankaccountservice.dtos.UpdateBankAccountDTO;
+import com.stb.bankaccountservice.dtos.UpdateTransactionPinDTO;
 import com.stb.bankaccountservice.entities.BankAccount;
 import com.stb.bankaccountservice.entities.BankAccountType;
 import com.stb.bankaccountservice.rabbitMQ.RabbitMQProducer;
@@ -16,7 +19,9 @@ import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -31,16 +36,18 @@ public class BankAccountServiceImpl implements BankAccountService {
     private final AccountNumberGenerator accountNumberGenerator;
     private final BankAccountTypeRepository bankAccountTypeRepository;
     private final RabbitMQProducer rabbitMQProducer;
+    private  final BcryptProvider bcryptProvider;
 
     @Autowired
     public BankAccountServiceImpl(BankAccountRepository bankAccountRepository,
                                   AccountNumberGenerator accountNumberGenerator,
             BankAccountTypeRepository bankAccountTypeRepository,
-            RabbitMQProducer rabbitMQProducer) {
+            RabbitMQProducer rabbitMQProducer, BcryptProvider bcryptProvider) {
         this.bankAccountRepository = bankAccountRepository;
         this.accountNumberGenerator = accountNumberGenerator;
         this.bankAccountTypeRepository = bankAccountTypeRepository;
         this.rabbitMQProducer = rabbitMQProducer;
+        this.bcryptProvider = bcryptProvider;
     }
 
     @Override
@@ -123,5 +130,31 @@ public class BankAccountServiceImpl implements BankAccountService {
     @Override
     public void delete(Long id) {
         bankAccountRepository.deleteById(id);
+    }
+
+    @Override
+    public void setTransactionPin(Long bankAccountId, SetTransactionPinDTO setTransactionPinDTO) {
+        BankAccount bankAccount = this.get(bankAccountId);
+        if (bankAccount.getTransactionPin() != null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bank account already has a transaction pin");
+        String hashedPin = bcryptProvider.hash(setTransactionPinDTO.getPin());
+        bankAccount.setTransactionPin(hashedPin);
+        bankAccountRepository.save(bankAccount);
+    }
+
+    @Override
+    public void changeTransactionPin(Long id, UpdateTransactionPinDTO updateTransactionPinDTO) {
+        BankAccount bankAccount = this.get(id);
+
+        if (bankAccount.getTransactionPin() == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Set transaction pin before changing it");
+
+        if (!bcryptProvider.isMatch(updateTransactionPinDTO.getCurrentPin(), bankAccount.getTransactionPin())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect transaction pin");
+        }
+
+        String hashedPin = bcryptProvider.hash(updateTransactionPinDTO.getNewPin());
+        bankAccount.setTransactionPin(hashedPin);
+        bankAccountRepository.save(bankAccount);
     }
 }

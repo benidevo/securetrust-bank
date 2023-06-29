@@ -1,5 +1,6 @@
 package com.stb.bankaccountservice.config.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
@@ -10,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,10 +27,11 @@ import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 public class JwtFilter extends OncePerRequestFilter {
-
     private final PublicKey publicKey;
 
     public JwtFilter() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
@@ -49,7 +52,6 @@ public class JwtFilter extends OncePerRequestFilter {
                         .parseClaimsJws(jwt);
 
                 Claims claims = jws.getBody();
-                log.error("Claims: {}", claims);
                 String userId = String.valueOf(claims.get("user_id", Integer.class));
                 String role = claims.get("user_role", String.class);
 
@@ -65,9 +67,16 @@ public class JwtFilter extends OncePerRequestFilter {
 
             }
         } catch (JwtException e) {
-            log.error("Invalid JWT token", e);
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
-            return;
+            log.error("Authentication Failed: ", e);
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+            final Map<String, Object> body = new HashMap<>();
+            body.put("success", false);
+            body.put("message", "Authentication failed");
+
+            final ObjectMapper mapper = new ObjectMapper();
+            mapper.writeValue(response.getOutputStream(), body);
         }
 
         filterChain.doFilter(request, response);

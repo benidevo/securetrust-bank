@@ -2,8 +2,11 @@ package com.stb.bankaccountservice.services.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.stb.bankaccountservice.dtos.CreateBankAccountDTO;
+import com.stb.bankaccountservice.dtos.SetTransactionPinDTO;
 import com.stb.bankaccountservice.dtos.UpdateBankAccountDTO;
+import com.stb.bankaccountservice.dtos.UpdateTransactionPinDTO;
 import com.stb.bankaccountservice.entities.BankAccount;
+import com.stb.bankaccountservice.utils.apiResponse.ApiResponse;
 
 import java.util.List;
 
@@ -21,4 +24,8 @@ public interface BankAccountService {
     List<BankAccount> list();
 
     void delete(Long id);
+
+    void setTransactionPin(Long bankAccountId, SetTransactionPinDTO setTransactionPinDTO);
+
+    void changeTransactionPin(Long id, UpdateTransactionPinDTO updateTransactionPinDTO);
 }

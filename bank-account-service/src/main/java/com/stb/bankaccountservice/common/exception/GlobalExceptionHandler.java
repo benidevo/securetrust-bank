@@ -13,6 +13,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.server.ResponseStatusException;
 
 @Component
 @ControllerAdvice
@@ -83,5 +84,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(JsonProcessingException.class)
     public void handleJsonProcessingException(JsonProcessingException ex) {
         log.error("Error while processing JSON", ex);
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<ApiResponse> handleResponseStatusException(ResponseStatusException ex) {
+        log.error("Error while processing JSON", ex);
+        return new ResponseEntity<>(ApiResponse.builder()
+                .success(false)
+                .message(ex.getReason())
+                .build(),
+                ex.getStatusCode()
+        );
     }
 }

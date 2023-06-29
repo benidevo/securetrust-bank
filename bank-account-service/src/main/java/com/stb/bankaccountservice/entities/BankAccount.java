@@ -1,5 +1,6 @@
 package com.stb.bankaccountservice.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,6 +38,10 @@ public class BankAccount {
 
     @Column(name = "balance", nullable = false)
     private BigDecimal balance;
+
+    @JsonIgnore
+    @Column(name = "transaction_pin")
+    private String transactionPin;
 
     @ManyToOne
     @JoinColumn(name = "bank_account_type_id")
