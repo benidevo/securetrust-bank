@@ -12,6 +12,7 @@ RUN --mount=type=cache,target=/root/.m2 ./mvnw dependency:resolve
 
 COPY src ./src
 COPY .env ./.env
+COPY public.key ./public.key
 
 COPY ./docker/entrypoint.sh /app/entrypoint.sh
 
