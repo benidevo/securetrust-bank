@@ -1,6 +1,5 @@
 package com.stb.bankaccountservice.config.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -15,9 +14,6 @@ import java.security.spec.InvalidKeySpecException;
 @Configuration
 @EnableMethodSecurity
 public class WebSecurityConfig {
-    @Autowired
-    private AuthEntryPointJwt unauthorizedHandler;
-
     @Bean
     public JwtFilter authenticationJwtTokenFilter() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
         return new JwtFilter();
@@ -26,11 +22,8 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
-                .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/api/v1/bank-account/**").permitAll()
-                                .anyRequest().authenticated()
+                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated()
                 );
 
         http.headers(headers -> headers.frameOptions(frameOption -> frameOption.sameOrigin()));

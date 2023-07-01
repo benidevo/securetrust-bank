@@ -4,3 +4,7 @@ spring:
       host: transaction-db
       port: 27017
       database: transaction-db
+
+springdoc:
+  swagger-ui:
+    path: /api/v1/transaction/api-docs

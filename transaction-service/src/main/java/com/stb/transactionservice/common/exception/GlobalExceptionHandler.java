@@ -1,8 +1,7 @@
-package com.stb.bankaccountservice.common.exception;
+package com.stb.transactionservice.common.exception;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.stb.bankaccountservice.utils.apiResponse.ApiResponse;
-import jakarta.persistence.EntityExistsException;
+import com.stb.transactionservice.utils.apiResponse.ApiResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -31,12 +30,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ApiResponse> handleEntityNotFoundException(EntityNotFoundException ex) {
-        return  new ResponseEntity<>(ApiResponse.builder()
+        return new ResponseEntity<>(ApiResponse.builder()
                 .success(false)
                 .message(ex.getMessage())
                 .build(),
-                HttpStatus.NOT_FOUND
-        );
+                HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
@@ -48,39 +46,28 @@ public class GlobalExceptionHandler {
                 .success(false)
                 .message(errorMessage)
                 .build(),
-                HttpStatus.BAD_REQUEST
-        );
-    }
-
-    @ExceptionHandler(EntityExistsException.class)
-    public ResponseEntity<ApiResponse> handleEntityExistsException(EntityExistsException ex) {
-        return new ResponseEntity<>(ApiResponse.builder()
-                .success(false)
-                .message(ex.getMessage())
-                .build(),
-                HttpStatus.BAD_REQUEST
-        );
+                HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<ApiResponse> handleMethodNotSupportedException(HttpRequestMethodNotSupportedException ex) {
+    public ResponseEntity<ApiResponse> handleHttpRequestMethodNotSupportedException(
+            HttpRequestMethodNotSupportedException ex) {
+        log.error("HttpRequestMethodNotSupportedException: ", ex);
         return new ResponseEntity<>(ApiResponse.builder()
                 .success(false)
                 .message(ex.getMessage())
                 .build(),
-                HttpStatus.METHOD_NOT_ALLOWED
-        );
+                HttpStatus.METHOD_NOT_ALLOWED);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
         log.error("HttpMessageNotReadableException: ", ex);
-        return new ResponseEntity<>(ApiResponse.builder()
+        return  new ResponseEntity<>(ApiResponse.builder()
                 .success(false)
                 .message("Required request body is missing")
                 .build(),
-                HttpStatus.BAD_REQUEST
-        );
+                HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(JsonProcessingException.class)
@@ -100,14 +87,12 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ApiResponse> handleAccessControlException(AccessDeniedException ex) {
-        log.error("AccessControlException: ", ex);
+    public ResponseEntity<ApiResponse> handleAccessDeniedException(AccessDeniedException ex) {
         return new ResponseEntity<>(ApiResponse.builder()
                 .success(false)
                 .message(ex.getMessage())
                 .build(),
-                HttpStatus.FORBIDDEN
-        );
+                HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(Exception.class)
@@ -117,7 +102,6 @@ public class GlobalExceptionHandler {
                 .success(false)
                 .message("Internal server error")
                 .build(),
-                HttpStatus.INTERNAL_SERVER_ERROR
-        );
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

@@ -10,7 +10,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -30,7 +29,6 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
-@Slf4j
 public class JwtFilter extends OncePerRequestFilter {
     private final PublicKey publicKey;
 
@@ -67,7 +65,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
             }
         } catch (JwtException e) {
-            log.error("Authentication Failed: ", e);
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 

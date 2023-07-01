@@ -1,6 +1,5 @@
 package com.stb.transactionservice.config.security;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -9,7 +8,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,7 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import java.nio.file.Files;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -30,7 +28,6 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
-@Slf4j
 public class JwtFilter extends OncePerRequestFilter {
     private final PublicKey publicKey;
 
@@ -40,35 +37,43 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse
-            response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse
+            response, @NotNull FilterChain filterChain) throws ServletException, IOException {
         String jwt = extractJwtFromRequest(request);
+        if (jwt == null) {
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+            final Map<String, Object> body = new HashMap<>();
+            body.put("success", false);
+            body.put("message", "Authentication failed");
+
+            final ObjectMapper mapper = new ObjectMapper();
+            mapper.writeValue(response.getOutputStream(), body);
+        }
 
         try {
-            if (jwt != null) {
-                Jws<Claims> jws = Jwts.parserBuilder()
-                        .setSigningKey(publicKey)
-                        .build()
-                        .parseClaimsJws(jwt);
+            Jws<Claims> jws = Jwts.parserBuilder()
+                    .setSigningKey(publicKey)
+                    .build()
+                    .parseClaimsJws(jwt);
 
-                Claims claims = jws.getBody();
-                String userId = String.valueOf(claims.get("userId", Integer.class));
-                String role = claims.get("user_role", String.class);
+            Claims claims = jws.getBody();
+            String userId = String.valueOf(claims.get("user_id", Integer.class));
+            String role = claims.get("user_role", String.class);
 
-                UserDetails userDetails = User.builder()
-                        .username(userId)
-                        .password("")
-                        .authorities(new SimpleGrantedAuthority(role))
-                        .build();
+            UserDetails userDetails = User.builder()
+                    .username(userId)
+                    .password("")
+                    .authorities(new SimpleGrantedAuthority(role))
+                    .build();
 
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                                userDetails, null, userDetails.getAuthorities()
-                        );
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities()
+                    );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
         } catch (Exception e) {
-            log.error("Authentication failed", e);
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
