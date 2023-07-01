@@ -6,7 +6,6 @@ import com.stb.bankaccountservice.dtos.SetTransactionPinDTO;
 import com.stb.bankaccountservice.dtos.UpdateBankAccountDTO;
 import com.stb.bankaccountservice.dtos.UpdateTransactionPinDTO;
 import com.stb.bankaccountservice.entities.BankAccount;
-import com.stb.bankaccountservice.utils.apiResponse.ApiResponse;
 
 import java.util.List;
 

@@ -9,6 +9,7 @@ SecureTrust Bank is an online banking platform that allows users to create bank 
   - [Overview](#overview)
   - [Features](#features)
   - [Technology Stack](#technology-stack)
+  - [Run The App](#run-the-app)
   - [Docs](#docs)
   - [License](#license)
 
@@ -40,45 +41,36 @@ The backend API consists of six microservices:
 
 The technology stack used in this project is as follows:
 
-- User Account Service:
-  - Python
-  - Django
-  - Redis
-  - PostgreSQL
-  - RabbitMQ
-  - Docker
+- User Account Service: Python | Django | Redis | PostgreSQL | RabbitMQ | Docker
 
-- Notification Service:
-  - Typescript
-  - Node.js
-  - Express
-  - RabbitMQ
-  - Docker
+- Notification Service: Typescript | Node.js | Express | RabbitMQ | Docker
 
-- Bank Account Service:
-  - Java
-  - Spring Boot
-  - Redis
-  - MySQL
-  - Docker
+- Bank Account Service: Java | Spring Boot | Redis | MySQL | Docker
 
-- Transaction Service:
-  - Java
-  - Spring Boot
-  - Redis
-  - MongoDB
-  - Docker
+- Transaction Service:  Java | Spring Boot | Redis | MongoDB | Docker
 
-- File Upload Service:
-  - Typescript
-  - Node.js
-  - Express
-  - AWS S3
-  - Docker
+- File Upload Service: Typescript | Node.js | Express | AWS S3 | Docker
 
-- Search Service:
-  - Elasticsearch
-  - Docker
+- Search Service: Elasticsearch | Docker
+
+## Run The App
+
+  ***Only run this command the first time you clone the project***</br>
+  Ensure you are in the base directory and in a unix (macOS or Linux or WSL) environment:
+
+  ```bash
+  sh setup.sh
+  ```
+
+  This will take some time to pull images and build the containers. Subsequently, run:
+
+  To stop the app:
+
+  ```bash
+  make down
+  ```
+
+  Other commands can be found in the Makefile in the root directory.
 
 ## Docs
 
