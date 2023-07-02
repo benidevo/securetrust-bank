@@ -6,9 +6,9 @@ import lombok.Data;
 
 @Data
 @Builder
-public class Beneficiary {
+public class TransactionParty {
     @NotEmpty
-    private String accountNumber;
+    private String number;
     @NotEmpty
     private String name;
     private String bank = "";

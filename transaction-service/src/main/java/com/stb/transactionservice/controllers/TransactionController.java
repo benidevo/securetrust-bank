@@ -9,10 +9,12 @@ import com.stb.transactionservice.utils.apiResponse.TransactionsResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.security.core.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +35,10 @@ public class TransactionController {
     public ResponseEntity<TransactionResponse<Transaction>> create(@Valid @RequestBody
                                                                        CreateTransactionDTO transaction,
                                                                    BindingResult result) {
-        Transaction newTransaction = transactionService.create(transaction);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long bankAccountId = Long.parseLong(authentication.getName());
+
+        Transaction newTransaction = transactionService.create(bankAccountId, transaction);
         TransactionResponse<Transaction> response = TransactionResponse.builder()
                 .success(true)
                 .message("Transaction successful")

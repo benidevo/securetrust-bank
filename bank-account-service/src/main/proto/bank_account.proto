@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package com.stb.bankaccountservice.grpc;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "document.proto";
+import "bank_account_type.proto";
+
+
+service BankAccountService {
+  rpc GetBankAccount(GetBankAccountRequest) returns (BankAccountResponse) {}
+  rpc CreateBankAccount(CreateBankAccountRequest) returns (BankAccountResponse) {}
+  rpc UpdateBankAccount(UpdateBankAccountRequest) returns (BankAccountResponse) {}
+  rpc DeleteBankAccount(DeleteBankAccountRequest) returns (google.protobuf.Empty) {}
+}
+
+message GetBankAccountRequest {
+  int64 id = 1;
+}
+
+message CreateBankAccountRequest {
+  string name = 1;
+  string number = 2;
+  bool is_active = 3;
+  string transaction_pin = 4;
+  string account_type_id = 5;
+  repeated Document documents = 6;
+}
+
+message UpdateBankAccountRequest {
+  int64 id = 1;
+  string name = 2;
+  bool is_active = 3;
+  repeated Document documents = 4;
+}
+
+message DeleteBankAccountRequest {
+  int64 id = 1;
+}
+
+message BankAccountResponse {
+  int64 id = 1;
+  string name = 2;
+  string number = 3;
+  bool is_active = 4;
+  string transaction_pin = 5;
+  BankAccountType account_type = 6;
+  repeated Document documents = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+}

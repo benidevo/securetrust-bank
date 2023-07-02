@@ -1,6 +1,6 @@
 package com.stb.transactionservice.entities;
 
-import com.stb.transactionservice.dtos.Beneficiary;
+import com.stb.transactionservice.dtos.TransactionParty;
 import com.stb.transactionservice.utils.TransactionType;
 import lombok.Builder;
 import lombok.Data;
@@ -35,8 +35,8 @@ public class Transaction {
     @Field("bank_account_id")
     private Long bankAccountId;
 
-    @Field("beneficiary")
-    private Beneficiary beneficiary;
+    @Field("transaction_party")
+    private TransactionParty transactionParty;
 
     @CreatedDate
     @Field("created_at")
@@ -45,5 +45,4 @@ public class Transaction {
     @LastModifiedDate
     @Field("updated_at")
     private Date updatedAt;
-
 }

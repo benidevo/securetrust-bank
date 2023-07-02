@@ -52,7 +52,7 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     @Override
     public BankAccount create(CreateBankAccountDTO createBankAccountDTO) throws JsonProcessingException {
-        Optional<Object> existingBankAccount = bankAccountRepository.findByUserId(createBankAccountDTO.getUserId());
+        Optional<BankAccount> existingBankAccount = bankAccountRepository.findById(createBankAccountDTO.getUserId());
         if (existingBankAccount.isPresent()) {
             throw new EntityExistsException("This user already has a bank account");
         }
@@ -70,7 +70,7 @@ public class BankAccountServiceImpl implements BankAccountService {
 
         BankAccount bankAccount = BankAccount.builder()
                 .name(createBankAccountDTO.getName())
-                .userId(createBankAccountDTO.getUserId())
+                .id(createBankAccountDTO.getUserId())
                 .number(accountNumber)
                 .accountType(bankAccountType.get())
                 .balance(BigDecimal.valueOf(0.0))
@@ -111,13 +111,6 @@ public class BankAccountServiceImpl implements BankAccountService {
     @Override
     public BankAccount getByAccountNumber(String accountNumber) {
         return (BankAccount) bankAccountRepository.findByNumber(accountNumber).orElseThrow(
-            () -> new EntityNotFoundException("BankAccount not found")
-        );
-    }
-
-    @Override
-    public BankAccount getByUserId(Long userId) {
-        return (BankAccount) bankAccountRepository.findByUserId(userId).orElseThrow(
             () -> new EntityNotFoundException("BankAccount not found")
         );
     }

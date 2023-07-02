@@ -21,11 +21,8 @@ import java.util.List;
 @Table(name = "bank_account")
 public class BankAccount {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, unique = true)
     private Long id;
-
-    @Column(name = "user_id", nullable = false, unique = true)
-    private Long userId;
 
     @Column(name = "name", nullable = false)
     private String name;

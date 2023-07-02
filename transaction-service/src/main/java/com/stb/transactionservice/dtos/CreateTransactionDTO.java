@@ -1,7 +1,6 @@
 package com.stb.transactionservice.dtos;
 
 import com.stb.transactionservice.utils.TransactionType;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Builder;
@@ -27,9 +26,5 @@ public class CreateTransactionDTO {
     private String description = "";
 
     @NotNull
-    @Positive
-    private Long bankAccountId;
-
-    @NotNull
-    private Beneficiary beneficiary;
+    private TransactionParty transactionParty;
 }

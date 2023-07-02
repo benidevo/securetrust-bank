@@ -73,7 +73,7 @@ public class BankAccountController {
     public ResponseEntity<BankAccountResponse<BankAccount>> getAuthUserBankAccount() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = Long.parseLong(authentication.getName());
-        BankAccount bankAccount = bankAccountService.getByUserId(userId);
+        BankAccount bankAccount = bankAccountService.get(userId);
         BankAccountResponse<BankAccount> response = BankAccountResponse.builder()
                 .success(true)
                 .message("Bank account retrieved successfully")

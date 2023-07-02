@@ -18,8 +18,6 @@ public interface BankAccountService {
 
     BankAccount getByAccountNumber(String accountNumber);
 
-    BankAccount getByUserId(Long userId);
-
     List<BankAccount> list();
 
     void delete(Long id);

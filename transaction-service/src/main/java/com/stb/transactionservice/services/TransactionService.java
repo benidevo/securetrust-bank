@@ -6,7 +6,7 @@ import com.stb.transactionservice.entities.Transaction;
 import java.util.List;
 
 public interface TransactionService {
-    Transaction create(CreateTransactionDTO createTransactionDTO);
+    Transaction create(Long bankAccountId, CreateTransactionDTO createTransactionDTO);
     List<Transaction> list();
     List<Transaction> findByBankAccountId(Long bankAccountId);
     Transaction get(String id);

@@ -19,14 +19,18 @@ public class TransactionServiceImpl implements TransactionService {
     @Autowired
     private TransactionRepository transactionRepository;
     @Override
-    public Transaction create(CreateTransactionDTO createTransactionDTO) {
+    public Transaction create(Long bankAccountId, CreateTransactionDTO createTransactionDTO) {
+        // check if user's bank account can perform the transaction
+        // check account balance
+        // check if recipient account exists
+        // make transaction
         Transaction newTransaction = Transaction.builder()
-                .bankAccountId(createTransactionDTO.getBankAccountId())
+                .bankAccountId(bankAccountId)
                 .isInternal(createTransactionDTO.isInternal())
                 .type(createTransactionDTO.getType())
                 .amount(createTransactionDTO.getAmount())
                 .description(createTransactionDTO.getDescription())
-                .beneficiary(createTransactionDTO.getBeneficiary())
+                .transactionParty(createTransactionDTO.getTransactionParty())
                 .build();
 
         return transactionRepository.save(newTransaction);
