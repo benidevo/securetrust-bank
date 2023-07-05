@@ -1,4 +1,4 @@
-package com.stb.bankaccountservice.services.rest.impl;
+package com.stb.bankaccountservice.services.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,7 +12,7 @@ import com.stb.bankaccountservice.entities.BankAccountType;
 import com.stb.bankaccountservice.rabbitMQ.RabbitMQProducer;
 import com.stb.bankaccountservice.repositories.BankAccountRepository;
 import com.stb.bankaccountservice.repositories.BankAccountTypeRepository;
-import com.stb.bankaccountservice.services.rest.BankAccountService;
+import com.stb.bankaccountservice.services.BankAccountService;
 import com.stb.bankaccountservice.utils.AccountNumberGenerator;
 import com.stb.bankaccountservice.utils.BankAccountNotification;
 import jakarta.persistence.EntityExistsException;

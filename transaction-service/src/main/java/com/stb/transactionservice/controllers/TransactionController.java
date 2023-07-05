@@ -1,5 +1,6 @@
 package com.stb.transactionservice.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.stb.transactionservice.common.annotation.HandleValidationErrors;
 import com.stb.transactionservice.dtos.CreateTransactionDTO;
 import com.stb.transactionservice.entities.Transaction;
@@ -34,7 +35,7 @@ public class TransactionController {
     @HandleValidationErrors
     public ResponseEntity<TransactionResponse<Transaction>> create(@Valid @RequestBody
                                                                        CreateTransactionDTO transaction,
-                                                                   BindingResult result) {
+                                                                   BindingResult result) throws JsonProcessingException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long bankAccountId = Long.parseLong(authentication.getName());
 

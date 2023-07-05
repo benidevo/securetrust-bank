@@ -95,6 +95,16 @@ public class GlobalExceptionHandler {
                 HttpStatus.FORBIDDEN);
     }
 
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ApiResponse> handleBadRequestException(BadRequestException ex) {
+        return new ResponseEntity<>(ApiResponse.builder()
+                .success(false)
+                .message(ex.getMessage())
+                .build(),
+                HttpStatus.BAD_REQUEST
+        );
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse> handleException(Exception ex) {
         log.error("Internal Server Error: ", ex);

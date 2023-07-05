@@ -20,9 +20,6 @@ public class Transaction {
     @Id
     private String id;
 
-    @Field("is_internal")
-    private boolean isInternal;
-
     @Field("type")
     private TransactionType type;
 

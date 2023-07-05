@@ -1,7 +1,7 @@
 package com.stb.bankaccountservice.rabbitMQ.consumers;
 
 import com.stb.bankaccountservice.dtos.CreateBankAccountDTO;
-import com.stb.bankaccountservice.services.rest.BankAccountService;
+import com.stb.bankaccountservice.services.BankAccountService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.annotation.RabbitListeners;

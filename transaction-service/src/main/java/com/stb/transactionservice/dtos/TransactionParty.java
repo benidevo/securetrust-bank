@@ -10,6 +10,5 @@ public class TransactionParty {
     @NotEmpty
     private String number;
     @NotEmpty
-    private String name;
-    private String bank = "";
+    private String name = "";
 }

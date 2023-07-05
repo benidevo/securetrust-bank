@@ -1,4 +1,4 @@
-package com.stb.bankaccountservice.services.rest;
+package com.stb.bankaccountservice.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.stb.bankaccountservice.dtos.CreateBankAccountDTO;

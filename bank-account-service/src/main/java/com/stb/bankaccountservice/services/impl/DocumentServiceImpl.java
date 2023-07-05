@@ -1,11 +1,11 @@
-package com.stb.bankaccountservice.services.rest.impl;
+package com.stb.bankaccountservice.services.impl;
 
 import com.stb.bankaccountservice.dtos.DocumentPayloadDTO;
 import com.stb.bankaccountservice.entities.BankAccount;
 import com.stb.bankaccountservice.entities.Document;
 import com.stb.bankaccountservice.repositories.BankAccountRepository;
 import com.stb.bankaccountservice.repositories.DocumentRepository;
-import com.stb.bankaccountservice.services.rest.DocumentService;
+import com.stb.bankaccountservice.services.DocumentService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

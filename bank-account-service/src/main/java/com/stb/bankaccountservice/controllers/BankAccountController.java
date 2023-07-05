@@ -7,7 +7,7 @@ import com.stb.bankaccountservice.dtos.SetTransactionPinDTO;
 import com.stb.bankaccountservice.dtos.UpdateBankAccountDTO;
 import com.stb.bankaccountservice.dtos.UpdateTransactionPinDTO;
 import com.stb.bankaccountservice.entities.BankAccount;
-import com.stb.bankaccountservice.services.rest.BankAccountService;
+import com.stb.bankaccountservice.services.BankAccountService;
 import com.stb.bankaccountservice.utils.apiResponse.ApiResponse;
 import com.stb.bankaccountservice.utils.apiResponse.BankAccountResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -83,9 +83,22 @@ public class BankAccountController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @Operation(description = "Get a bank account type by account number")
+    @GetMapping("/number/{accountNumber}")
+    public ResponseEntity<BankAccountResponse<BankAccount>> getByAccountNumber(@PathVariable String accountNumber) {
+        BankAccount bankAccount = bankAccountService.getByAccountNumber(accountNumber);
+        BankAccountResponse<BankAccount> response = BankAccountResponse.builder()
+                .success(true)
+                .message("Bank account retrieved successfully")
+                .data(bankAccount)
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @Operation(description = "Get a bank account type by id")
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('" + ADMIN_ROLE + "')")
+//    @PreAuthorize("hasAuthority('" + ADMIN_ROLE + "')")
     public ResponseEntity<BankAccountResponse<BankAccount>> get(@PathVariable Long id) {
         BankAccount bankAccount = bankAccountService.get(id);
         BankAccountResponse<BankAccount> response = BankAccountResponse.builder()

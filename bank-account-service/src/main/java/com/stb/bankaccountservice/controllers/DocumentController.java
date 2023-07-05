@@ -3,7 +3,7 @@ package com.stb.bankaccountservice.controllers;
 import com.stb.bankaccountservice.common.annotation.HandleValidationErrors;
 import com.stb.bankaccountservice.dtos.DocumentPayloadDTO;
 import com.stb.bankaccountservice.entities.Document;
-import com.stb.bankaccountservice.services.rest.DocumentService;
+import com.stb.bankaccountservice.services.DocumentService;
 import com.stb.bankaccountservice.utils.apiResponse.ApiResponse;
 import com.stb.bankaccountservice.utils.apiResponse.DocumentResponse;
 import io.swagger.v3.oas.annotations.Operation;

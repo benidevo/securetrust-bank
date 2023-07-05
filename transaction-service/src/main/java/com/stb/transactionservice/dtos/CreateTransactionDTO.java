@@ -12,9 +12,6 @@ import java.math.BigDecimal;
 @Data
 @Builder
 public class CreateTransactionDTO {
-    // TODO: Add validation
-    private boolean isInternal;
-
     @NotNull(message = "type must be either CREDIT or DEBIT")
     private TransactionType type;
 
