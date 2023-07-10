@@ -95,9 +95,6 @@ public class TransactionServiceImpl implements TransactionService {
         );
 
         BankAccount recipientBankAccount = recipientResponse.getData();
-        if (!recipientBankAccount.getIsActive()) {
-            throw new BadRequestException("Recipient account is inactive");
-        }
 
         createTransactionDTO.getTransactionParty().setName(recipientBankAccount.getName());
         Transaction senderTransaction = Transaction.builder()

@@ -2,6 +2,7 @@ package com.stb.bankaccountservice.services.impl;
 
 import com.stb.bankaccountservice.dtos.DocumentPayloadDTO;
 import com.stb.bankaccountservice.entities.BankAccount;
+import com.stb.bankaccountservice.entities.BankAccountType;
 import com.stb.bankaccountservice.entities.Document;
 import com.stb.bankaccountservice.repositories.BankAccountRepository;
 import com.stb.bankaccountservice.repositories.DocumentRepository;
@@ -38,9 +39,14 @@ public class DocumentServiceImpl implements DocumentService {
                 .docUrl(documentPayloadDTO.getDocUrl())
                 .build();
         documentRepository.save(document);
+
+        BankAccountType bankAccountType = bankAccount.getAccountType();
+        if (!bankAccountType.getUnlimited()) {
+            bankAccountType.setUnlimited(true);
+        }
+        
         bankAccount.getDocuments().add(document);
         bankAccountRepository.save(bankAccount);
-
 
         return document;
     }
